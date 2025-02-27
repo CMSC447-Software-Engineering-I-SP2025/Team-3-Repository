@@ -1,7 +1,8 @@
-import Header from "@/components/Header";
+import Header from "@/components/layout/Header";
+import TopBar from "@/components/layout/TopBar";
 import theme from "@/theme";
-import { ThemeProvider } from "@mui/material";
-import Grid2 from "@mui/material/Grid2";
+import { AccountCircle } from "@mui/icons-material";
+import { Box, ThemeProvider } from "@mui/material";
 
 export const metadata = {
   title: "Application Tracker UI",
@@ -11,25 +12,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        style={{
-          margin: 0,
-          minHeight: '100vh',
-          display: 'flex'
-        }}
-      >
-        <ThemeProvider theme={theme}>
-          <Grid2
-            sx={{
-              flex: 1,
-              flexGrow: 1,
-            }}
-          >
+      <ThemeProvider theme={theme}>
+        <body
+          style={{
+            margin: 0,
+            minHeight: '100vh',
+            display: 'flex'
+          }}
+        >
+          <Box sx={{ flex: 1, flexGrow: 1 }} >
             <Header/>
-            {children}
-          </Grid2>
-        </ThemeProvider>
-      </body>
+            <Box sx={{ marginLeft: '60px', backgroundColor: 'background', height: '100%' }}>
+              <TopBar/>
+              { children }
+            </Box>
+          </Box>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

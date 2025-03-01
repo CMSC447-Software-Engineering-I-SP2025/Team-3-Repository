@@ -29,7 +29,7 @@ TBD
     - If nothing fails, you win.
 2. To start the Backend API, go into the "backend" dir and run the following:
     - `./gradlew bootRun`
-3. Go into the "resume-tracker-ui" directory.
+3. Go into the "application-tracker-ui" directory.
     - `npm install`
 4. Finally, to start the UI, run the following command in that same directory 
     - `npm run dev`

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import server.api.dao.AuthDAO;
+import server.api.dao.UserDAO;
 import server.api.database.DatabaseConnector;
 import server.api.mappers.ObjectIdSerializer;
 import server.api.mappers.ObjectIdDeserializer;
@@ -18,6 +19,11 @@ public class Config {
   @Bean
   public AuthDAO authDao(DatabaseConnector client) {
     return new AuthDAO(client);
+  }
+  
+  @Bean
+  public UserDAO userDao(DatabaseConnector client) {
+    return new UserDAO(client);
   }
 
   @Bean

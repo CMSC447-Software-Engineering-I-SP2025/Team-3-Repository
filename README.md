@@ -34,4 +34,4 @@ TBD
 4. Finally, to start the UI, run the following command in that same directory 
     - `npm run dev`
 
-Now all the services are started. You can access the UI at `https://localhost:3000`
+Now all the services are started. You can access the UI at `http://localhost:3000`

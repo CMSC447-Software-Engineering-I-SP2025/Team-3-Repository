@@ -9,6 +9,7 @@ const PathMappings = {
   '/applications': 'Applications',
   '/applications/search': 'Search',
   '/registration': 'Register',
+  '/account': 'Account',
 }
 
 const TopBar = () => {

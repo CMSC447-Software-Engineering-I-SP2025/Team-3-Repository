@@ -1,6 +1,6 @@
 'use client'
-import { Box, Grid2, IconButton, Tooltip } from '@mui/material'
-import { BarChartRounded, Article, Search, Person2, PlusOne, HdrPlusOutlined, AddAPhoto, AddBox } from '@mui/icons-material';
+import { Box, Grid2 } from '@mui/material'
+import { BarChartRounded, Article, Search, Person, AddBox } from '@mui/icons-material';
 import Link from 'next/link';
 
 const COMMON_ICON_STYLES = {
@@ -43,8 +43,13 @@ const Header = () =>
       <HeaderEntry href='/applications/search' >
         <Search {...COMMON_ICON_STYLES} />
       </HeaderEntry>
+<<<<<<< HEAD
       <HeaderEntry href='/applications/create' >
         <AddBox {...COMMON_ICON_STYLES} />
+=======
+      <HeaderEntry href='/account' >
+        <Person {...COMMON_ICON_STYLES} />
+>>>>>>> abecc51 (CPB-17: feat - user information view)
       </HeaderEntry>
     </Grid2>
   </Box>

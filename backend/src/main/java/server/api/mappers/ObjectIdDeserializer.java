@@ -15,7 +15,7 @@ public class ObjectIdDeserializer extends StdDeserializer<ObjectId> {
   @Override
   public ObjectId deserialize(JsonParser jp, DeserializationContext ctx) throws IOException {
     JsonNode node = jp.getCodec().readTree(jp);
-    String idAsString = node.get("id").asText();
-    return new ObjectId(idAsString);
+    String asStr = node.asText();
+    return new ObjectId(asStr);
   }
 }

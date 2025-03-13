@@ -37,7 +37,7 @@ const Header = () =>
       <HeaderEntry href='/' >
         <BarChartRounded {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/applications' >
+      <HeaderEntry href='/applications/view' >
         <Article {...COMMON_ICON_STYLES} />
       </HeaderEntry>
       <HeaderEntry href='/applications/search' >
@@ -45,7 +45,7 @@ const Header = () =>
       </HeaderEntry>
       <HeaderEntry href='/applications/create' >
         <AddBox {...COMMON_ICON_STYLES} />
-        </HeaderEntry>
+      </HeaderEntry>
       <HeaderEntry href='/account' >
         <Person {...COMMON_ICON_STYLES} />
       </HeaderEntry>

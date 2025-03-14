@@ -45,6 +45,7 @@ const Header = () =>
       </HeaderEntry>
       <HeaderEntry href='/applications/create' >
         <AddBox {...COMMON_ICON_STYLES} />
+        </HeaderEntry>
       <HeaderEntry href='/account' >
         <Person {...COMMON_ICON_STYLES} />
       </HeaderEntry>

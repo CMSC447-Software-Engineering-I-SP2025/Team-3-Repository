@@ -43,13 +43,10 @@ const Header = () =>
       <HeaderEntry href='/applications/search' >
         <Search {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-<<<<<<< HEAD
       <HeaderEntry href='/applications/create' >
         <AddBox {...COMMON_ICON_STYLES} />
-=======
       <HeaderEntry href='/account' >
         <Person {...COMMON_ICON_STYLES} />
->>>>>>> abecc51 (CPB-17: feat - user information view)
       </HeaderEntry>
     </Grid2>
   </Box>

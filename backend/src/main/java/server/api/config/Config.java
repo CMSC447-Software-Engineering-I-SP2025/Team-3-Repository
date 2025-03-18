@@ -3,6 +3,7 @@ package server.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import server.api.dao.ApplicationDAO;
 import server.api.dao.AuthDAO;
 import server.api.dao.UserDAO;
 import server.api.database.DatabaseConnector;
@@ -16,6 +17,12 @@ import org.bson.types.ObjectId;
 
 @Configuration
 public class Config {
+
+  @Bean
+  public ApplicationDAO appDao(DatabaseConnector client) {
+    return new ApplicationDAO(client);
+  }
+
   @Bean
   public AuthDAO authDao(DatabaseConnector client) {
     return new AuthDAO(client);

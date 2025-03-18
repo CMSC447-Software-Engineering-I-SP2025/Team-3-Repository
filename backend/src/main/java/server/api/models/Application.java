@@ -12,7 +12,8 @@ import java.util.List;
 @Document(collection = "application")
 public class Application {
     @Id
-    private String id;
+    private ObjectId id;
+    private String userId;
     private String title;
     private String link;
     private String salary;

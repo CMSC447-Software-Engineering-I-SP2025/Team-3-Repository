@@ -93,13 +93,7 @@ const RegistrationView = ({
     setState({ response: apiResponse })
   }
 
-  return <PageContainer
-    sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}
-  >
+  return <PageContainer>
     <Grid2
       container 
       sx={{

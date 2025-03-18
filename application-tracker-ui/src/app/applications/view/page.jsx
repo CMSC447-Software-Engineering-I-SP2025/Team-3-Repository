@@ -84,7 +84,7 @@ export default function ApplicationsView() {
             {applications.map((application) => (
               <TableRow key={application.id} sx={{ backgroundColor: 'white' }}>
                 <TableCell sx={{ backgroundColor: 'white' }}>
-                  <Link href={`/applications/manageid?=${application.id}`} passHref>
+                  <Link href={`/applications/manage?id=${application.id}`} passHref>
                     <SubmitButton text="Edit" /> 
                   </Link>
                 </TableCell>

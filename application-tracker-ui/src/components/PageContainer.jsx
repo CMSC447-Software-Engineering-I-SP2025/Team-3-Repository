@@ -1,3 +1,4 @@
+import { PageContainerStyles } from "@/constants/styleConstants"
 import { Box } from "@mui/material"
 
 const PageContainer = ({ children, sx = {}, ...props }) =>
@@ -5,6 +6,7 @@ const PageContainer = ({ children, sx = {}, ...props }) =>
     sx={{
       minHeight: 'calc(100% - 60px)',
       overflow: 'auto',
+      ...PageContainerStyles,
       ...sx
     }}
     {...props}

@@ -1,8 +1,7 @@
 import Header from "@/components/layout/Header";
 import TopBar from "@/components/layout/TopBar";
-import theme from "@/theme";
-import { Box, ThemeProvider } from "@mui/material";
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import Provider from "@/components/Providers";
+import { Box } from "@mui/material";
 
 export const metadata = {
   title: "Application Tracker UI",
@@ -19,17 +18,15 @@ export default function RootLayout({ children }) {
           display: 'flex'
         }}
       >
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <Box sx={{ flex: 1, flexGrow: 1 }} >
-              <Header/>
-              <Box sx={{ marginLeft: '60px', backgroundColor: 'background', height: '100%' }}>
-                <TopBar/>
-                { children }
-              </Box>
+        <Provider>
+          <Box sx={{ flex: 1, flexGrow: 1 }} >
+            <Header/>
+            <Box sx={{ marginLeft: '60px', backgroundColor: 'background', height: '100%' }}>
+              <TopBar/>
+              { children }
             </Box>
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+          </Box>
+        </Provider>
       </body>
     </html>
   );

@@ -11,12 +11,12 @@ const PathMappings = {
   '/registration': 'Register',
   '/account': 'Account',
   '/edit': 'Edit',
+  '/applications/manage': 'Manage Application',
+  '/applications/create': 'Create Application',
 }
 
 const TopBar = () => {
   const path = usePathname() 
-
-
   return (
     <Box
       sx={{

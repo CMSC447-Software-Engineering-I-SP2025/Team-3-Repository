@@ -1,4 +1,4 @@
-export const performApiCall = async request => {
+export const performApiCall = async (request = {}) => {
   const {
     method,
     requestBody,
@@ -8,7 +8,7 @@ export const performApiCall = async request => {
   const headers = new Headers()
   headers.append('Content-Type', 'application/json')
 
-  const body = JSON.stringify(requestBody)
+  const body = method !== 'GET' ? JSON.stringify(requestBody) : null
 
   const fetchOptions = { headers, method, body }
   return await fetch(url, fetchOptions)

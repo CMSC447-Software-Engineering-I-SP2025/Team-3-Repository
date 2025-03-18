@@ -11,6 +11,7 @@ import SubmitButton from "@/components/SubmitButton"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowForward } from "@mui/icons-material"
+import Select from "@/components/Select"
 
 const STATUS_OPTIONS = [
   { value: 'IN_PROGRESS', label: 'In Progress' },
@@ -91,19 +92,9 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
           <Input fullWidth name="employer" label="Employer" />
         </Grid2>
         <Grid2 size={12}>
-          <Input
+          <Select
             name="status"
             label="Status"
-            fullWidth
-            select
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  backgroundColor: '#ffffff !important', 
-                  zIndex: 1300, 
-                },
-              },
-            }}
           >
             {STATUS_OPTIONS.map(option => (
               <MenuItem
@@ -119,22 +110,12 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
                 {option.label}
               </MenuItem>
             ))}
-          </Input>
+          </Select>
         </Grid2>
         <Grid2 size={12}>
-          <Input
+          <Select
             name="priority"
             label="Priority"
-            fullWidth
-            select
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  backgroundColor: '#ffffff !important', 
-                  zIndex: 1300, 
-                },
-              },
-            }}
           >
             {PRIORITY_OPTIONS.map(option => (
               <MenuItem
@@ -150,7 +131,7 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
                 {option.label}
               </MenuItem>
             ))}
-          </Input>
+          </Select>
         </Grid2>
         <Grid2 size={12} display="flex" justifyContent="flex-end">
           <SubmitButton text="Create Application" />

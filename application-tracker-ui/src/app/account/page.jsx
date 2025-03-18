@@ -1,14 +1,16 @@
+import { performApiCall } from '@/utils/apiUtils.js';
 import View from './view.jsx';
+import { notFound } from 'next/navigation.js';
 
-export default function ProfilePage() {
-  // Simulated user data (Normally, this would come from an API)
-  const user = {
-    username: "john_doe123",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    skills: ["JavaScript", "React", "Node.js", "CSS", "HTML"],
-  };
+export default async function ProfilePage() {
+  
+  // hard-coded, will work later when login is supported
+  const { data, status } = await performApiCall({
+    method: 'GET',
+    url: `${process.env.API_URL}/users/email?email=somenewemail@dev.com`
+  })
 
-  return <View user={user} />;
+  if (!data || status !== 200) { notFound() }
+
+  return <View user={data} />;
 }

@@ -4,7 +4,7 @@ import ApplicationCreateView from "./view"
 const handleCreateApplication = async applicationData => {
   'use server'
   const apiUrl = process.env.API_URL
-  const url = `${apiUrl}/applications`
+  const url = `${apiUrl}/application/create`
   const request = {
     url,
     requestBody: applicationData,

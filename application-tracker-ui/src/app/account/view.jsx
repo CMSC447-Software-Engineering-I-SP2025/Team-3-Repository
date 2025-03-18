@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { Grid, Card, CardContent, Typography, Divider, Chip, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Divider, Chip, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, CardActions, Grid2 } from '@mui/material';
 
 export default function ProfilePage({ user }) {
 	const [open, setOpen] = useState(false); // controls the confirmation dialog
@@ -101,9 +101,24 @@ export default function ProfilePage({ user }) {
 								))}
 							</Box>
 						</Grid>
-
+					</Grid>
+				</CardContent>
+				<CardActions>
+					<Grid2 container spacing={2} width='100%' >
+						<Grid2 size={6}>
+							<Button
+								variant="contained"
+								href='/account/edit'
+								sx={{
+									mt: 2,
+									backgroundColor: 'intermediate'
+								}}
+							>
+								Edit Account
+							</Button>
+						</Grid2>
 						{/* delete account button */}
-						<Grid item>
+						<Grid2 size={6} display='flex' justifyContent='end'>
 							<Button
 								variant="contained"
 								color="error"
@@ -112,9 +127,9 @@ export default function ProfilePage({ user }) {
 							>
 								Delete Account
 							</Button>
-						</Grid>
-					</Grid>
-				</CardContent>
+						</Grid2>
+					</Grid2>
+				</CardActions>
 			</Card>
 
 			{/* delete confirm modal */}

@@ -10,7 +10,7 @@ const PathMappings = {
   '/applications/search': 'Search',
   '/registration': 'Register',
   '/account': 'Account',
-  '/edit': 'Edit',
+  '/account/edit': 'Edit',
   '/applications/manage': 'Manage Application',
   '/applications/create': 'Create Application',
 }

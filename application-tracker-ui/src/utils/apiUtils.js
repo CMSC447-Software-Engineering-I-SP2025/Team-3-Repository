@@ -3,18 +3,29 @@ export const performApiCall = async (request = {}) => {
     method,
     requestBody,
     url,
-    optionalErrorMessage = null
+    optionalErrorMessage = null,
+    cacheOptions = { revalidate: 3600 }
   } = request
   const headers = new Headers()
   headers.append('Content-Type', 'application/json')
+  const nullBody = method !== 'GET' && method !== 'DELETE'
 
-  const body = method !== 'GET' ? JSON.stringify(requestBody) : null
+  const body = nullBody ? JSON.stringify(requestBody) : null
 
-  const fetchOptions = { headers, method, body }
+  const fetchOptions = {
+    headers,
+    method,
+    body,
+    cache: 'no-store'
+  }
   return await fetch(url, fetchOptions)
     .then(async apiResponse => {
       if (apiResponse.status !== 200) {
-        return optionalErrorMessage ?? 'Request Failed' 
+        return {
+          status: apiResponse.status,
+          error: optionalErrorMessage ?? 'Request Failed',
+          data: null
+        } 
       }
 
       // parse JSON from the response

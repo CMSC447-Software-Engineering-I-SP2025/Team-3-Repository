@@ -12,20 +12,9 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowForward } from "@mui/icons-material"
 import Select from "@/components/Select"
-
-const STATUS_OPTIONS = [
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'SUBMITTED', label: 'Submitted' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'ACCEPTED', label: 'Accepted' }
-]
-
-const PRIORITY_OPTIONS = [
-  { value: 'LOW', label: 'Low' },
-  { value: 'MEDIUM', label: 'Medium' },
-  { value: 'HIGH', label: 'High' },
-  { value: 'EXPEDITE', label: 'Expedite' }
-]
+import { AppPriority, AppStatus } from "@/constants"
+import { fromEnumValue } from "@/utils/enumUtils"
+import { DateTime } from "luxon"
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required('Required'),
@@ -33,8 +22,8 @@ const validationSchema = Yup.object().shape({
   salary: Yup.string().required('Required'),
   keywords: Yup.string().required('Required'),
   employer: Yup.string().required('Required'),
-  status: Yup.string().required('Required').oneOf(STATUS_OPTIONS.map(option => option.value)),
-  priority: Yup.string().required('Required').oneOf(PRIORITY_OPTIONS.map(option => option.value))
+  status: Yup.string().required('Required').oneOf(Object.values(AppStatus)),
+  priority: Yup.string().required('Required').oneOf(Object.values(AppPriority))
 })
 
 const BodyContent = ({ state, form, submitFunction = () => {} }) => {
@@ -45,7 +34,7 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
           <Alert severity="success">
             <AlertTitle>Success!</AlertTitle>
             Job application created successfully.
-            <Link href="/applications" style={{ textDecoration: 'none' }}>
+            <Link href="/applications/view" style={{ textDecoration: 'none' }}>
               <Typography
                 sx={{
                   display: 'flex',
@@ -96,18 +85,12 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
             name="status"
             label="Status"
           >
-            {STATUS_OPTIONS.map(option => (
+            {Object.values(AppStatus).map(option => (
               <MenuItem
-                key={option.value}
-                value={option.value}
-                sx={{
-                  backgroundColor: '#ffffff !important', 
-                  '&:hover': {
-                    backgroundColor: '#f5f5f5 !important',
-                  },
-                }}
+                key={option}
+                value={option}
               >
-                {option.label}
+                {fromEnumValue(option)}
               </MenuItem>
             ))}
           </Select>
@@ -117,18 +100,12 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
             name="priority"
             label="Priority"
           >
-            {PRIORITY_OPTIONS.map(option => (
+            {Object.values(AppPriority).map(option => (
               <MenuItem
-                key={option.value}
-                value={option.value}
-                sx={{
-                  backgroundColor: '#ffffff !important', 
-                  '&:hover': {
-                    backgroundColor: '#f5f5f5 !important', 
-                  },
-                }}
+                key={option}
+                value={option}
               >
-                {option.label}
+                {fromEnumValue(option)}
               </MenuItem>
             ))}
           </Select>
@@ -151,14 +128,25 @@ const ApplicationCreateView = ({ handleCreateApplication }) => {
       salary: '',
       keywords: '',
       employer: '',
-      status: 'IN_PROGRESS', 
-      priority: 'LOW' 
+      status: AppStatus.IN_PROGRESS,
+      priority: AppPriority.LOW
     },
     resolver: yupResolver(validationSchema)
   })
 
   const submitFunction = async formData => {
-    const apiResponse = await handleCreateApplication(formData)
+    const commaDelimedKeywords = formData.keywords.split(',')
+
+    // will fix when login works
+    const newValues = {
+      ...formData,
+      keywords: commaDelimedKeywords,
+      userId: '67d8506f9c0d6b3246eed5ba',
+      dateCreated: DateTime.now().toISODate(),
+      dateApplied: formData.status === AppStatus.SUBMITTED ? DateTime.now().toISODate() : null
+    }
+
+    const apiResponse = await handleCreateApplication(newValues)
     setState({ response: apiResponse })
   }
 

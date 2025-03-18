@@ -1,6 +1,6 @@
 'use client'
 import { Box, Grid2 } from '@mui/material'
-import { BarChartRounded, Article, Search, Person, AddBox, Edit } from '@mui/icons-material';
+import { BarChartRounded, Article, Search, AddBox } from '@mui/icons-material';
 import Link from 'next/link';
 
 const COMMON_ICON_STYLES = {
@@ -45,12 +45,6 @@ const Header = () =>
       </HeaderEntry>
       <HeaderEntry href='/applications/create' >
         <AddBox {...COMMON_ICON_STYLES} />
-      </HeaderEntry>
-      <HeaderEntry href='/account' >
-        <Person {...COMMON_ICON_STYLES} />
-      </HeaderEntry>
-      <HeaderEntry href='/edit' >
-        <Edit {...COMMON_ICON_STYLES} />
       </HeaderEntry>
     </Grid2>
   </Box>

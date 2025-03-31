@@ -15,6 +15,7 @@ import java.util.List;
 
 import server.api.dao.UserDAO;
 import server.api.models.User;
+import server.api.models.Signup;
 
 @RestController
 @RequestMapping("users")
@@ -79,5 +80,27 @@ public class UserController {
 			}
 
 			return ResponseEntity.ok(true);
+		}
+	
+	@PostMapping("/signup")
+		public ResponseEntity<User> signup(@RequestBody Signup signup) {
+			
+			Assert.notNull(signup, "Signup body cannot be null!");
+			Assert.hasText(signup.getEmail(), "Email must not be empty!");
+			Assert.hasText(signup.getUsername(), "Username must not be empty!");
+
+			User existing = this.dao.findByEmail(signup.getEmail());
+			if (existing != null) {
+				return ResponseEntity.status(409).build();
+			}
+
+			User newUser = signup.toUser();
+
+			User saved = this.dao.createOne(newUser);
+			if (saved == null) {
+				return ResponseEntity.badRequest().build();
+			}
+
+			return ResponseEntity.ok(saved);
 		}
 }

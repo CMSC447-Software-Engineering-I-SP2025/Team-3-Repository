@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import com.mongodb.client.MongoDatabase;
 import java.util.List;
 
 import server.api.dao.UserDAO;
@@ -46,9 +45,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping("/register")
 		public ResponseEntity<User> createUser(@RequestBody User user) {
 			Assert.notNull(user, "User body cannot be null!");
+			Assert.notNull(user.getPasswordHash(), "Cannot register with empty password.");
 
 			User saved = this.dao.createOne(user);
 			if (saved == null) {

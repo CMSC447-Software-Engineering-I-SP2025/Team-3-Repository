@@ -13,6 +13,7 @@ import server.api.mappers.ObjectIdDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.bson.types.ObjectId;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Configuration
@@ -41,6 +42,11 @@ public class Config {
     module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
     mapper.registerModule(module);
     return mapper;
+  }
+
+  @Bean
+  public BCryptPasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(12);
   }
 
 }

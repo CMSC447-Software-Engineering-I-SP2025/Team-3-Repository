@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import com.mongodb.client.MongoDatabase;
@@ -16,6 +18,8 @@ import org.bson.Document;
 
 import server.api.dao.AuthDAO;
 import server.api.models.Authorization;
+import server.api.models.LoginRequest;
+import server.api.security.AuthenticationService;
 
 
 // Basic REST Controller
@@ -25,6 +29,8 @@ import server.api.models.Authorization;
 public class AuthController {
 
   private final AuthDAO dao;
+  @Autowired
+  private AuthenticationService authService;
 
   // Basic Constructor for the Controller.
   // Any parameters a controller ingests must have a Bean definition
@@ -91,5 +97,14 @@ public class AuthController {
     return ResponseEntity.ok(true);
   }
 
-}
+  @PostMapping("/login")
+  public ResponseEntity<String> doLogin(@RequestBody LoginRequest request) {
+    Assert.notNull(request, "Request cannot be empty");
+    String token = this.authService.verify(request);
 
+    if (token == null) {
+      return ResponseEntity.status(403).build();
+    }
+    return ResponseEntity.ok(token);
+  }
+}

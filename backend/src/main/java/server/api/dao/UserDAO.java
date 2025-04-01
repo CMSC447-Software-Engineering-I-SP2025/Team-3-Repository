@@ -1,5 +1,8 @@
 package server.api.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ import org.bson.conversions.Bson;
 public class UserDAO {
     private final DatabaseConnector client;
     private static final String COLLECTION = "users";
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public UserDAO(DatabaseConnector client) {
         Assert.notNull(client, "Client cannot be null.");
@@ -47,6 +52,12 @@ public class UserDAO {
         return collection.find(query).limit(1).first();
     }
 
+	public User findByUsername (String username) {
+        MongoCollection<User> collection = this.client.instance(COLLECTION, User.class);
+        Bson query = Filters.eq("username", username);
+        return collection.find(query).limit(1).first();
+    }
+
     public User createOne(User user) {
         if (user == null) {
             return null;
@@ -59,6 +70,8 @@ public class UserDAO {
         }
 
         user.setId(null);
+        user.setPasswordHash(this.passwordEncoder.encode(user.getPasswordHash()));
+
         MongoCollection<User> collection = this.client.instance(COLLECTION, User.class);
 
         InsertOneResult writeResult = collection.insertOne(user);
@@ -67,6 +80,7 @@ public class UserDAO {
         }
 
         user.setId(writeResult.getInsertedId().asObjectId().getValue());
+        user.setPasswordHash(null);
         return user;
     }
 

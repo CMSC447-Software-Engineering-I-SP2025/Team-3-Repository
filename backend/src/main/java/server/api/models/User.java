@@ -19,4 +19,5 @@ public class User {
     private String lastName;
     private String email;
     private List<String> skills;
+    private String passwordHash;
 }

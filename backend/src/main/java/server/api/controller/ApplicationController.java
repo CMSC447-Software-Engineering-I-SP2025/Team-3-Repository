@@ -8,12 +8,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import java.util.List;
 
 import server.api.dao.ApplicationDAO;
 import server.api.models.Application;
+import server.api.security.CurrentUserResolver;
+import server.api.security.UserSecurityException;
 
 @RestController
 @RequestMapping("application")
@@ -53,6 +58,7 @@ public class ApplicationController {
     public ResponseEntity<Application> createApp(@RequestBody Application application) {
         Assert.notNull(application, "Application body cannot be null!");
         Assert.hasText(application.getUserId(), "User ID must not be empty!");
+        CurrentUserResolver.canPerformAction(application.getUserId());
 
         Application saved = this.dao.create(application);
         if (saved == null) {

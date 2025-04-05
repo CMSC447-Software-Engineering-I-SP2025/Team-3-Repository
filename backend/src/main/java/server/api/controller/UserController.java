@@ -88,15 +88,12 @@ public class UserController {
 			Assert.notNull(signup, "Signup body cannot be null!");
 			Assert.hasText(signup.getEmail(), "Email must not be empty!");
 			Assert.hasText(signup.getUsername(), "Username must not be empty!");
-
 			User existing = this.dao.findByEmail(signup.getEmail());
 			if (existing != null) {
 				return ResponseEntity.status(409).build();
 			}
 
-			User newUser = signup.toUser();
-
-			User saved = this.dao.createOne(newUser);
+			User saved = this.dao.createOne(signup.toUser());
 			if (saved == null) {
 				return ResponseEntity.badRequest().build();
 			}

@@ -20,7 +20,7 @@ public class Signup {
 		user.setFirstName(this.firstName);
 		user.setLastName(this.lastName);
 		user.setEmail(this.email);
-		// omitting passwords for now
+		user.setPasswordHash(this.password);
 		return user;
 	}
 }

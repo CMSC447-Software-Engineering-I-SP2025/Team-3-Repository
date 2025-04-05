@@ -5,7 +5,7 @@ import ApplicationsView from "./view"
 const ApplicationsPage = async () => {
   const { data, status } = await performApiCall({
     method: 'GET',
-    url: `${process.env.API_URL}/application/user?userId=67d8506f9c0d6b3246eed5ba`,
+    url: `${process.env.API_URL}/application/user?userId=${process.env.TESTING_USER_ID}`,
     cacheOptions: { revalidate: 0  }
   })
 

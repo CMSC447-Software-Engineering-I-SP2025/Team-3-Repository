@@ -141,7 +141,7 @@ const ApplicationCreateView = ({ handleCreateApplication }) => {
     const newValues = {
       ...formData,
       keywords: commaDelimedKeywords,
-      userId: '67d8506f9c0d6b3246eed5ba',
+      userId: null,
       dateCreated: DateTime.now().toISODate(),
       dateApplied: formData.status === AppStatus.SUBMITTED ? DateTime.now().toISODate() : null
     }

@@ -9,6 +9,8 @@ const ApplicationsPage = async () => {
     cacheOptions: { revalidate: 0  }
   })
 
+  console.log(status)
+
   if (status !== 200) { notFound() }
 
   return <ApplicationsView applications={data} />

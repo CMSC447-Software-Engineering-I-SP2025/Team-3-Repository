@@ -219,7 +219,8 @@ const ApplicationManageView = ({
             </Typography>
           </Grid2>
           <BasicInput name='title' label='Title' />
-          <BasicInput name='salary' label='Salary' />
+          <BasicInput type='number' name='salaryMin' label='Min Salary' />
+          <BasicInput type='number' name='salaryMax' label='Max Salary' />
           <SelectInput name='status' label='Status'>
             { Object.values(AppStatus).map((value, index) =>
               <MenuItem value={value} key={index}>{ fromEnumValue(value) }</MenuItem>

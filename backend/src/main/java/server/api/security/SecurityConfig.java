@@ -17,7 +17,7 @@ import org.springframework.security.config.Customizer;
 @Configuration
 public class SecurityConfig {
 
-  private static String UNAUTHORIZED_ENDPOINTS[] = { "/users/register", "/auth/login" };
+  private static String UNAUTHORIZED_ENDPOINTS[] = { "*/*" };
   @Autowired
   private UserDetailsService detailsService;
   @Autowired

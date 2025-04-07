@@ -16,7 +16,8 @@ public class Application {
     private String userId;
     private String title;
     private String link;
-    private String salary;
+    private Double salaryMin;
+    private Double salaryMax;
     private List<String> keywords;
     private String employer;
     private String dateCreated;

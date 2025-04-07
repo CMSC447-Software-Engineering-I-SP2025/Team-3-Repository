@@ -19,7 +19,8 @@ import { DateTime } from "luxon"
 const validationSchema = Yup.object().shape({
   title: Yup.string().required('Required'),
   link: Yup.string().url('Must be a valid URL').required('Required'),
-  salary: Yup.string().required('Required'),
+  salaryMin: Yup.number().required('Required'),
+  salaryMax: Yup.number().required('Required'),
   keywords: Yup.string().required('Required'),
   employer: Yup.string().required('Required'),
   status: Yup.string().required('Required').oneOf(Object.values(AppStatus)),
@@ -72,7 +73,10 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
           <Input fullWidth name="link" label="Job Posting Link" />
         </Grid2>
         <Grid2 size={12}>
-          <Input fullWidth name="salary" label="Salary Range" />
+          <Input type='number' fullWidth name="salaryMin" label="Min Salary" />
+        </Grid2>
+        <Grid2 size={12}>
+          <Input type='number' fullWidth name="salaryMax" label="Max Salary" />
         </Grid2>
         <Grid2 size={12}>
           <Input fullWidth name="keywords" label="Keywords/Skills" />

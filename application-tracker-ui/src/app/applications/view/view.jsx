@@ -55,7 +55,8 @@ const ApplicationsView = ({ applications = [] }) =>
             <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Status</TableCell>
             <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Application Title/Role</TableCell>
             <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Company/Employer</TableCell>
-            <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Salary</TableCell>
+            <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Min Salary</TableCell>
+            <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Max Salary</TableCell>
             <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }}>Date Applied</TableCell>
             <TableCell sx={{ backgroundColor: 'white', fontWeight: 'bold' }} align='right'>Action</TableCell>
           </TableRow>
@@ -73,7 +74,8 @@ const ApplicationsView = ({ applications = [] }) =>
               </TableCell>
               <TableCell sx={{ backgroundColor: 'white' }}>{application.title}</TableCell>
               <TableCell sx={{ backgroundColor: 'white' }}>{application.employer}</TableCell>
-              <TableCell sx={{ backgroundColor: 'white' }}>{application.salary}</TableCell>
+              <TableCell sx={{ backgroundColor: 'white' }}>{application.salaryMin}</TableCell>
+              <TableCell sx={{ backgroundColor: 'white' }}>{application.salaryMax}</TableCell>
               <TableCell sx={{ backgroundColor: 'white' }}>{application.dateApplied}</TableCell>
               <TableCell sx={{ backgroundColor: 'white' }} align='right'>
                 <Link href={`/applications/manage?id=${application.id}&action=delete`} passHref>

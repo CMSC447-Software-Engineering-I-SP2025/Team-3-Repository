@@ -12,3 +12,8 @@ export const AppPriority = {
     HIGH: 'HIGH',
     EXPEDITED: 'EXPEDITED',
 };
+
+export const HeaderValues = {
+    EMAIL: 'x-app-tracker-user-email',
+    TOKEN: 'x-app-tracker-token'
+}

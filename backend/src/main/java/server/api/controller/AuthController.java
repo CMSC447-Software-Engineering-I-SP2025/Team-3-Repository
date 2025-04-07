@@ -17,9 +17,13 @@ import java.util.List;
 import org.bson.Document;
 
 import server.api.dao.AuthDAO;
+import server.api.dao.UserDAO;
 import server.api.models.Authorization;
 import server.api.models.LoginRequest;
+import server.api.models.User;
+import server.api.models.UserDTO;
 import server.api.security.AuthenticationService;
+import server.api.security.CurrentUserResolver;
 
 
 // Basic REST Controller
@@ -31,6 +35,8 @@ public class AuthController {
   private final AuthDAO dao;
   @Autowired
   private AuthenticationService authService;
+  @Autowired
+  private UserDAO userDao;
 
   // Basic Constructor for the Controller.
   // Any parameters a controller ingests must have a Bean definition
@@ -97,6 +103,7 @@ public class AuthController {
     return ResponseEntity.ok(true);
   }
 
+
   @PostMapping("/login")
   public ResponseEntity<String> doLogin(@RequestBody LoginRequest request) {
     Assert.notNull(request, "Request cannot be empty");
@@ -106,5 +113,15 @@ public class AuthController {
       return ResponseEntity.status(403).build();
     }
     return ResponseEntity.ok(token);
+  }
+
+  @GetMapping("/details")
+  public ResponseEntity<UserDTO> getDetails() {
+    String userId = CurrentUserResolver.getUserId();
+    User user = this.userDao.findById(userId);
+
+    if (user == null) { return ResponseEntity.notFound().build(); }
+
+    return ResponseEntity.ok(UserDTO.fromUser(user));
   }
 }

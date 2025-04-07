@@ -1,16 +1,21 @@
-import { performApiCall } from '@/utils/apiUtils.js';
+import { performApiCall, performAuthenticatedApiCall } from '@/utils/apiUtils.js';
 import View from './view.jsx';
 import { notFound } from 'next/navigation.js';
+import { cookies, headers } from 'next/headers.js';
+import { HeaderValues } from '@/constants/index.js';
 
 export default async function ProfilePage() {
-  
-  // hard-coded, will work later when login is supported
-  const { data, status } = await performApiCall({
-    method: 'GET',
-    url: `${process.env.API_URL}/users/email?email=somenewemail@dev.com`
-  })
+  const nheaders = headers()
+  const email = nheaders.get(HeaderValues.EMAIL)
 
-  if (!data || status !== 200) { notFound() }
+  const { data, status } = await performAuthenticatedApiCall({
+    method: 'GET',
+    url: `${process.env.API_URL}/users/email?email=${email}`
+  }, nheaders)
+  
+  if (!data || status !== 200) {
+    notFound()
+  }
 
   return <View user={data} />;
 }

@@ -20,6 +20,12 @@ public class CurrentUserResolver {
     if (ctx != null) {
       Authentication auth = ctx.getAuthentication();
       if (auth != null) {
+        LOG.error(auth.getPrincipal().toString());
+
+        if ("anonymousUser".equals(auth.getPrincipal().toString())) {
+          return null;
+        }
+
         UserPrinciple principle = (UserPrinciple) auth.getPrincipal();
         return principle.getUserId().toString();
       }

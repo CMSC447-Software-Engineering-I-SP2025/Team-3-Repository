@@ -1,15 +1,18 @@
 // src/components/login/view.jsx
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, TextField, Typography, Container, Box, IconButton, Link } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useSessionStorage } from '@/utils/hooks';
+import { useRouter } from 'next/navigation';
+import { HeaderValues } from '@/constants';
 
 const LoginView = ({ action }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [session, setSessionStorage] = useSessionStorage('token')
+  const [session, setSessionStorage] = useSessionStorage(HeaderValues.TOKEN)
+  const router = useRouter()
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       username: '',
@@ -23,7 +26,17 @@ const LoginView = ({ action }) => {
     if (result.success && result.data) {
       setSessionStorage(result.data)
     }
+
+    router.replace('/')
   };
+
+  useEffect(() => {
+    const token = sessionStorage.getItem(HeaderValues.TOKEN)
+    if (token) {
+      router.push('/')      
+      return
+    }
+  }, [])
 
   return (
     <Container maxWidth="sm">

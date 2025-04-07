@@ -1,5 +1,8 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import LoginView from "./view";
+import { isAuthenticated } from "@/utils/securityUtils";
+import { redirect } from "next/navigation";
+import { HeaderValues } from "@/constants";
 
 // Server Action to handle login
 async function loginAction(data) {
@@ -20,7 +23,7 @@ async function loginAction(data) {
 
     const result = await response.text();
     // set the token in server cookies
-    cookies().set('Authorization', `Bearer ${result}`)
+    cookies().set(HeaderValues.TOKEN, result)
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: error.message };
@@ -28,7 +31,6 @@ async function loginAction(data) {
 }
 
 const LoginPage = () => {
-  const c = cookies()
   return <LoginView action={loginAction} />;
 };
 

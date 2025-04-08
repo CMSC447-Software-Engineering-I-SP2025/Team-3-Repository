@@ -35,3 +35,7 @@ TBD
     - `npm run dev`
 
 Now all the services are started. You can access the UI at `http://localhost:3000`
+
+## Sample-data info:
+Username: test-user
+Password: test-password

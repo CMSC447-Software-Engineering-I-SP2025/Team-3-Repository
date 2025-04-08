@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.bson.types.ObjectId;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @Document(collection = "recovery")
@@ -16,4 +18,5 @@ public class Recovery {
     private String username;
     private String email;
     private String token;
+	private Date createdAt = new Date();
 }

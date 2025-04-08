@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import server.api.dao.ApplicationDAO;
 import server.api.dao.AuthDAO;
 import server.api.dao.UserDAO;
+import server.api.dao.RecoveryDAO;
 import server.api.database.DatabaseConnector;
 import server.api.mappers.ObjectIdSerializer;
 import server.api.mappers.ObjectIdDeserializer;
@@ -32,6 +33,11 @@ public class Config {
   @Bean
   public UserDAO userDao(DatabaseConnector client) {
     return new UserDAO(client);
+  }
+  
+  @Bean
+  public RecoveryDAO recoveryDao(DatabaseConnector client) {
+    return new RecoveryDAO(client);
   }
 
   @Bean

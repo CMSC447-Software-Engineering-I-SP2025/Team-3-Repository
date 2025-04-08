@@ -115,4 +115,19 @@ public class UserDAO {
         UpdateResult result = collection.updateOne(query, update);
         return result.getModifiedCount() == 1;
     }
+	
+	public boolean updatePassword(User user, String password) {
+		if (user == null || user.getId() == null || !StringUtils.hasText(password)) {
+			return false;
+		}
+
+        String newPassword = this.passwordEncoder.encode(password);
+		MongoCollection<User> collection = this.client.instance(COLLECTION, User.class);
+
+		Bson query = Filters.eq("_id", user.getId());
+		Bson update = Updates.set("passwordHash", newPassword);
+
+		UpdateResult result = collection.updateOne(query, update);
+		return result.getModifiedCount() == 1;
+	}
 }

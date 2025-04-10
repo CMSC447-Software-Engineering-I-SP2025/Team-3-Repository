@@ -1,27 +1,22 @@
-// src/app/change-password/page.jsx
+import { performApiCall } from "@/utils/apiUtils";
 import ChangePasswordView from './view';
 
 // Server Action for placeholder API call
 async function changePasswordAction(data) {
   'use server';
-  const { newPassword } = data;
+  const { newPassword, token } = data;
 
-  // Placeholder API call
-  try {
-    const response = await fetch(`${process.env.API_URL}/change-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ newPassword }),
-    });
+  const response = await performApiCall({
+    method: 'POST',
+    requestBody: { newPassword}, //will add token here later after emailing link is done
+    url: `${process.env.API_URL}/password-reset`, //placeholder endpoint
+    optionalErrorMessage: 'Failed to reset password',
+  });
 
-    if (!response.ok) {
-      throw new Error('Password change failed');
-    }
-
-    const result = await response.json();
-    return { success: true, data: result };
-  } catch (error) {
-    return { success: false, error: error.message };
+  if (response.status === 200) {
+    return { success: true, data: response.data };
+  } else {
+    return { success: false, error: response.error };
   }
 }
 

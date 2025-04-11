@@ -1,7 +1,7 @@
 import { DatePicker } from "@mui/x-date-pickers"
 import { Controller, useFormContext } from "react-hook-form"
 
-const Date = ({ name = '', label = '', ...props }) => {
+const Date = ({ name = '', label = '', textFieldProps = {}, ...props }) => {
   const form = useFormContext()
 
   return <Controller
@@ -20,9 +20,14 @@ const Date = ({ name = '', label = '', ...props }) => {
           textField: {
             error: hasError,
             helperText: message,
-            fullWidth: true
+            fullWidth: true,
+            ...textFieldProps
+          },
+          desktopPaper: {
+            sx: { backgroundColor: 'white' }
           }
         }}
+        desktop
         {...props}
       />
     }}

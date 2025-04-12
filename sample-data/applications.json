@@ -3,8 +3,12 @@
     "_id": {
       "$oid": "67f146c94e389f6be008d1dc"
     },
-    "dateApplied": "2002-03-03",
-    "dateCreated": "2002-01-01",
+    "dateApplied": {
+      "$date": "2002-03-03T00:00:00Z"
+    },
+    "dateCreated": {
+      "$date": "2002-01-01T00:00:00Z"
+    },
     "employer": "Nova",
     "link": "https://reddi.it",
     "priority": "HIGH",
@@ -18,8 +22,12 @@
     "_id": {
       "$oid": "67f146e54e389f6be008d1de"
     },
-    "dateApplied": "2002-03-03",
-    "dateCreated": "2002-01-01",
+    "dateApplied": {
+      "$date": "2002-03-03T00:00:00Z"
+    },
+    "dateCreated": {
+      "$date": "2002-01-01T00:00:00Z"
+    },
     "employer": "Arbu",
     "link": "https://linked.in",
     "priority": "MEDIUM",

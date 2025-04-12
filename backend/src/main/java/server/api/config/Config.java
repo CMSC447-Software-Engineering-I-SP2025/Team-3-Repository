@@ -9,10 +9,17 @@ import server.api.dao.UserDAO;
 import server.api.dao.RecoveryDAO;
 import server.api.database.DatabaseConnector;
 import server.api.mappers.ObjectIdSerializer;
+import server.api.mappers.InstantModule;
 import server.api.mappers.ObjectIdDeserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
+
+import java.time.Instant;
+
 import org.bson.types.ObjectId;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -47,6 +54,7 @@ public class Config {
     module.addSerializer(ObjectId.class, new ObjectIdSerializer());
     module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
     mapper.registerModule(module);
+    mapper.registerModule(InstantModule.build());
     return mapper;
   }
 

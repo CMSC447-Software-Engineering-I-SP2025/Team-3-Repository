@@ -12,7 +12,11 @@ import com.mongodb.client.result.UpdateResult;
 import org.springframework.util.StringUtils;
 import org.bson.types.ObjectId;
 import org.bson.conversions.Bson;
+
+import server.api.models.AppPriority;
+import server.api.models.AppStatus;
 import server.api.models.Application;
+import server.api.models.ApplicationSearch;
 
 public class ApplicationDAO {
     private final DatabaseConnector client;
@@ -86,5 +90,65 @@ public class ApplicationDAO {
         );
         UpdateResult result = collection.updateOne(query, update);
         return result.getModifiedCount() == 1;
+    }
+
+    public List<Application> doFilter(ApplicationSearch search) {
+        if (search == null) {
+            return new ArrayList<>();
+        }
+
+        List<Bson> filters = new ArrayList<>();
+        filters.add(Filters.eq("userId", search.getUserId()));
+        
+        if (StringUtils.hasText(search.getStatus())) {
+            AppStatus status = AppStatus.valueOf(search.getStatus());
+            filters.add(Filters.eq("status", status));
+        }
+
+        if (StringUtils.hasText(search.getPriority())) {
+            AppPriority priority = AppPriority.valueOf(search.getPriority());
+            filters.add(Filters.eq("priority", priority));
+        }
+
+        if (StringUtils.hasText(search.getEmployer())) {
+            filters.add(Filters.eq("employer", search.getEmployer()));
+        }
+
+        if (search.getDateCreatedStart() != null) {
+            filters.add(Filters.gte("dateCreated", search.getDateAppliedStart()));
+        }
+
+        if (search.getDateCreatedEnd() != null) {
+            filters.add(Filters.lte("dateCreated", search.getDateCreatedEnd()));
+        }
+
+        if (search.getDateAppliedEnd() != null) {
+            filters.add(Filters.lte("dateApplied", search.getDateAppliedEnd()));
+        }
+
+        if (search.getDateAppliedStart() != null) {
+            filters.add(Filters.gte("dateApplied", search.getDateAppliedStart()));
+        }
+
+        if (search.getKeywords() != null && search.getKeywords().size() > 0) {
+            filters.add(Filters.in("keywords", search.getKeywords()));
+        }
+
+        if (search.getSalaryMax() != null) {
+            filters.add(Filters.lte("salaryMax", search.getSalaryMax()));
+        }
+
+        if (search.getSalaryMin() != null) {
+            filters.add(Filters.gte("salaryMin", search.getSalaryMin()));
+        }
+
+
+        Bson finalQuery = Filters.and(filters);
+
+        MongoCollection<Application> collection = this.client.instance(COLLECTION, Application.class); 
+
+        List<Application> results = new ArrayList<>();
+        return collection.find(finalQuery).into(results);
+
     }
 }

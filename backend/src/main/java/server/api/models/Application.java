@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -20,8 +22,8 @@ public class Application {
     private Double salaryMax;
     private List<String> keywords;
     private String employer;
-    private String dateCreated;
-    private String dateApplied;
+    private Instant dateCreated;
+    private Instant dateApplied;
 
     private AppStatus status;
     private AppPriority priority;

@@ -11,211 +11,155 @@ import {
   Typography,
   Box,
   Chip,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Grid2,
+  MenuItem,
 } from "@mui/material";
 import Link from "next/link";
 import SubmitButton from "@/components/SubmitButton";
 import { fromEnumValue } from "@/utils/enumUtils";
 import PlotMappings from "@/constants/plotMappings";
-import { AddRounded, Search } from "@mui/icons-material";
+import { AddRounded, FilterAltOffRounded, Search } from "@mui/icons-material";
+import { useForm } from "react-hook-form";
+import { DateTime } from "luxon";
+import Input from "@/components/Input";
+import Form from "@/components/Form";
+import Date from "@/components/Date";
+import Select from "@/components/Select";
+import { AppPriority, AppStatus } from "@/constants";
 import { useState } from "react";
 
-const ApplicationsView = ({ applications = [] }) => {
-  const [filters, setFilters] = useState({
-    status: '',
-    priority: '',
+const FilterOptions = ({
+  filterApplications = async () => {},
+  setAppState = () => {}
+}) => {
+  const defaultValues = {
     employer: '',
-    dateCreated: '',
-    dateSubmitted: '',
-    keywords: ''
-  });
+    status: 'default',
+    priority: 'default',
+    keywords: '',
+    dateCreatedStart: DateTime.now(),
+    dateCreatedEnd: DateTime.now(),
+    dateSubmittedStart: DateTime.now(),
+    dateSubmittedEnd: DateTime.now(),
+    salaryMin: 0,
+    salaryMax: 0
+  }
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const form = useForm({ defaultValues })
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Connect to API endpoint with filters
-    console.log('Submitting filters:', filters);
-  };
+  const handleSubmit = async values => {
+    let toSubmit = Object.keys(defaultValues).reduce((acc, curr) => ({ ...acc, [curr]: null }), {}) 
+    toSubmit.employer = values.employer
+    const dirtyFields = form.formState.dirtyFields
+
+    if (dirtyFields?.status && values.status !== 'default') {
+      toSubmit.status = values.status
+    }
+
+    if (dirtyFields?.priority && values.priority !== 'default') {
+      toSubmit.priority = values.priority
+    }
+
+    if (dirtyFields?.keywords) {
+      const split = values.keywords?.split(',')
+      toSubmit.keywords = split
+    }
+
+    if (dirtyFields?.dateCreatedStart) {
+      toSubmit.dateCreatedStart = values.dateCreatedStart.toISODate()
+    }
+
+    if (dirtyFields?.dateCreatedEnd) {
+      toSubmit.dateCreatedEnd = values.dateCreatedEnd.toISODate()
+    }
+
+    if (dirtyFields?.dateSubmittedStart) {
+      toSubmit.dateSubmittedStart = values.dateSubmittedStart.toISODate()
+    }
+
+    if (dirtyFields?.dateSubmittedEnd) {
+      toSubmit.dateSubmittedEnd = values.dateSubmittedEnd.toISODate()
+    }
+
+    if (dirtyFields?.salaryMin && values.salaryMin > 0) {
+      toSubmit.salaryMin = values.salaryMin
+    }
+
+    if (dirtyFields?.salaryMax && values.salaryMax > 0) {
+      toSubmit.salaryMax = values.salaryMax
+    }
+
+    const { data, error } = await filterApplications(toSubmit)
+    setAppState({ applications: data ?? [], error })
+  }
+
+  const resetFilters = () => {
+    form.reset(defaultValues)
+  }
+
+  return <Grid2 size={12} height='fit-content' backgroundColor='white' p={1} borderRadius={1} >
+    <Box width='100%'>
+      <Form methods={form} onSubmit={form.handleSubmit(handleSubmit)}>
+        <Grid2 container spacing={2} >
+          <Grid2 size={12} mb={1}>
+            <Typography fontSize='1.25rem' color='black' fontWeight='bold' >Filter Options</Typography>
+            <Box sx={{ borderRadius: 15, height: '5px', width: '50px', backgroundColor: 'lightPurple' }} />
+          </Grid2>
+          <Grid2 size={3}><Input size='small' fullWidth name='employer' label='Employer' /></Grid2>
+          <Grid2 size={3}><Input size='small' fullWidth name='keywords' label='Keywords (Comma separated)' /></Grid2>
+          <Grid2 size={3}><Input size='small' fullWidth name='salaryMin' label='Min. Salary' type='number' /></Grid2>
+          <Grid2 size={3}><Input size='small' fullWidth name='salaryMax' label='Max. Salary' type='number' /></Grid2>
+
+          <Grid2 size={3}><Date textFieldProps={{ size: 'small' }} name='dateCreatedStart' label='Created After' /></Grid2>
+          <Grid2 size={3}><Date textFieldProps={{ size: 'small' }} name='dateCreatedEnd' label='Created Before' /></Grid2>
+          <Grid2 size={3}><Date textFieldProps={{ size: 'small' }} name='dateSubmittedStart' label='Submitted After' /></Grid2>
+          <Grid2 size={3}><Date textFieldProps={{ size: 'small' }} name='dateSubmittedEnd' label='Submitted Before' /></Grid2>
+
+          <Grid2 size={3}>
+            <Select size='small' name='priority' label='Priority'>
+              <MenuItem value='default'>-- Default --</MenuItem>
+              { Object.values(AppPriority).map((val, idx) =>
+                <MenuItem key={idx} value={val}>
+                  { fromEnumValue(val) }
+                </MenuItem>
+              )}
+            </Select>
+          </Grid2>
+          <Grid2 size={3}>
+            <Select size='small' name='status' label='Status'>
+              <MenuItem value='default'>-- Default --</MenuItem>
+              { Object.values(AppStatus).map((val, idx) =>
+                <MenuItem key={idx} value={val}>
+                  { fromEnumValue(val) }
+                </MenuItem>
+              )}
+            </Select>
+          </Grid2>
+          <Grid2 size={4}/>
+          <Grid2 size={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button disabled={!form.formState.isDirty} sx={{ backgroundColor: 'lightPurple' }} fullWidth type='submit' variant='contained'>
+              Search
+            </Button>
+          </Grid2>
+          <Grid2 size={10}/>
+          <Grid2 size={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button disabled={!form.formState.isDirty} sx={{ backgroundColor: 'cream', color: 'black' }} fullWidth  variant='contained' onClick={resetFilters}>
+              Clear <FilterAltOffRounded sx={{ ml: 1 }} />
+            </Button>
+          </Grid2>
+        </Grid2>
+      </Form>
+    </Box>
+  </Grid2>
+}
+
+const ApplicationsView = ({ applications = [], filterApplications = async () => {} }) => {
+  const [appState, setAppState] = useState({ applications, errors: null })
 
   return (
-    <Grid2 container spacing={1} sx={{ p: 3, backgroundColor: "white", minHeight: "100vh" }}>
-      <Grid2 xs={12} sx={{ mb: 1 }}>
-        <Paper sx={{ 
-          p: 2, 
-          mb: 0,
-          backgroundColor: 'white',
-          border: '1px solid #e0e0e0',
-          boxShadow: 'none'
-        }}>
-          <Typography variant="h6" gutterBottom>Search Filters</Typography>
-          <form onSubmit={handleSubmit}>
-            <Grid2 container spacing={2}>
-              <Grid2 xs={12} sm={6} md={4}>
-                <FormControl fullWidth sx={{ backgroundColor: 'white' }}>
-                  <InputLabel sx={{ backgroundColor: 'white', px: 1 }}>Status</InputLabel>
-                  <Select
-                    name="status"
-                    value={filters.status}
-                    onChange={handleFilterChange}
-                    label="Status"
-                    sx={{ backgroundColor: 'white', minWidth: 150 }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          backgroundColor: 'white',
-                          '& .MuiMenuItem-root': {
-                            backgroundColor: 'white',
-                            '&:hover': {
-                              backgroundColor: '#f5f5f5'
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <MenuItem value="applied">Applied</MenuItem>
-                    <MenuItem value="interview">Interview</MenuItem>
-                    <MenuItem value="offer">Offer</MenuItem>
-                    <MenuItem value="rejected">Rejected</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid2>
-              
-              <Grid2 xs={12} sm={6} md={4}>
-                <FormControl fullWidth sx={{ backgroundColor: 'white' }}>
-                  <InputLabel sx={{ backgroundColor: 'white', px: 1 }}>Priority</InputLabel>
-                  <Select
-                    name="priority"
-                    value={filters.priority}
-                    onChange={handleFilterChange}
-                    label="Priority"
-                    sx={{ backgroundColor: 'white', minWidth: 150 }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          backgroundColor: 'white',
-                          '& .MuiMenuItem-root': {
-                            backgroundColor: 'white',
-                            '&:hover': {
-                              backgroundColor: '#f5f5f5'
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <MenuItem value="high">High</MenuItem>
-                    <MenuItem value="medium">Medium</MenuItem>
-                    <MenuItem value="low">Low</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid2>
-
-              <Grid2 xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Employer"
-                  name="employer"
-                  value={filters.employer}
-                  onChange={handleFilterChange}
-                  sx={{ backgroundColor: 'white' }}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                      sx: { backgroundColor: 'white', px: 1 }
-                    }
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Date Created"
-                  type="date"
-                  name="dateCreated"
-                  value={filters.dateCreated}
-                  onChange={handleFilterChange}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                      sx: { backgroundColor: 'white', px: 1 }
-                    }
-                  }}
-                  sx={{ backgroundColor: 'white' }}
-                />
-              </Grid2>
-
-              <Grid2 xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Date Submitted"
-                  type="date"
-                  name="dateSubmitted"
-                  value={filters.dateSubmitted}
-                  onChange={handleFilterChange}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                      sx: { backgroundColor: 'white', px: 1 }
-                    }
-                  }}
-                  sx={{ backgroundColor: 'white' }}
-                />
-              </Grid2>
-
-              <Grid2 xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  label="Keywords"
-                  name="keywords"
-                  value={filters.keywords}
-                  onChange={handleFilterChange}
-                  placeholder="Comma separated values"
-                  sx={{ backgroundColor: 'white' }}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                      sx: { backgroundColor: 'white', px: 1 }
-                    }
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  startIcon={<Search />}
-                  sx={{ 
-                    mt: 1,
-                    backgroundColor: '#7b1fa2',
-                    '&:hover': {
-                      backgroundColor: '#6a1b9a',
-                    }
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid2>
-            </Grid2>
-          </form>
-        </Paper>
-      </Grid2>
-
-      <Grid2 xs={12} sx={{ mt: 0 }}>
+    <Grid2 container sx={{ p: 3 }}>
+      <FilterOptions filterApplications={filterApplications} setAppState={setAppState} />
+      <Grid2 size={12} sx={{ mt: 2 }}>
         <TableContainer component={Paper} sx={{ backgroundColor: 'white' }}>
           <Table>
             <TableHead>
@@ -252,7 +196,7 @@ const ApplicationsView = ({ applications = [] }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {applications.map((application) => (
+              {appState?.applications?.map((application) => (
                 <TableRow key={application.id} sx={{ backgroundColor: 'white' }}>
                   <TableCell sx={{ backgroundColor: 'white' }}>
                     <Link href={`/applications/manage?id=${application.id}`} passHref>
@@ -266,7 +210,9 @@ const ApplicationsView = ({ applications = [] }) => {
                   <TableCell sx={{ backgroundColor: 'white' }}>{application.employer}</TableCell>
                   <TableCell sx={{ backgroundColor: 'white' }}>{application.salaryMin}</TableCell>
                   <TableCell sx={{ backgroundColor: 'white' }}>{application.salaryMax}</TableCell>
-                  <TableCell sx={{ backgroundColor: 'white' }}>{application.dateApplied}</TableCell>
+                  <TableCell sx={{ backgroundColor: 'white' }}>
+                    {DateTime.fromISO(application.dateApplied).toLocaleString(DateTime.DATE_MED)}
+                  </TableCell>
                   <TableCell sx={{ backgroundColor: 'white' }} align='right'>
                     <Link href={`/applications/manage?id=${application.id}&action=delete`} passHref>
                       <Button variant="contained" color="error">

@@ -88,6 +88,16 @@ const LoginView = ({ action }) => {
           >
             Log In
           </Button>
+		  
+		  <Button
+				href="/user/register"
+				variant="outlined"
+				fullWidth
+				sx={{ mt: 1 }}
+		  >
+			Register
+		  </Button>
+
         </Box>
       </Box>
     </Container>

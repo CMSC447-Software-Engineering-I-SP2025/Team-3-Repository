@@ -40,7 +40,7 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
         <Grid2 size={12}>
           <Alert severity="success">
             <AlertTitle>Registration Successful!</AlertTitle>
-            <Link href="/user/login" style={{ textDecoration: 'none' }}>
+            <Link href="login" style={{ textDecoration: 'none' }}>
               <Typography
                 sx={{
                   display: 'flex',
@@ -127,9 +127,16 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
             }}
           />
         </Grid2>
-        <Grid2 size={12} display="flex" justifyContent="flex-end">
-          <SubmitButton text="Register" />
-        </Grid2>
+        <Grid2 container spacing={1}>
+			<Grid2 xs={6}>
+				<Link href="/login" passHref>
+					<SubmitButton text="Login" fullWidth />
+				</Link>
+			</Grid2>
+			<Grid2 xs={6}>
+				<SubmitButton text="Register" fullWidth />
+			</Grid2>
+		</Grid2>
       </Grid2>
     </Form>
   )

@@ -8,6 +8,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useSessionStorage } from '@/utils/hooks';
 import { useRouter } from 'next/navigation';
 import { HeaderValues } from '@/constants';
+import PageContainer from '@/components/PageContainer';
+import ContentContainer from '@/components/ContentContainer';
 
 const LoginView = ({ action }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,58 +41,60 @@ const LoginView = ({ action }) => {
   }, [])
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Login
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
-          <TextField
-            label="Username"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            {...register('username', { required: 'Username is required' })}
-            error={!!errors.username}
-            helperText={errors.username?.message}
-          />
-          <Box sx={{ position: 'relative' }}>
+    <PageContainer>
+      <ContentContainer>
+        <Box sx={{ width: '100%', mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Login
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
             <TextField
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
+              label="Username"
               variant="outlined"
               fullWidth
               margin="normal"
-              {...register('password', { required: 'Password is required' })}
-              error={!!errors.password}
-              helperText={errors.password?.message}
+              {...register('username', { required: 'Username is required' })}
+              error={!!errors.username}
+              helperText={errors.username?.message}
             />
-            <IconButton
-              onClick={() => setShowPassword(!showPassword)}
-              sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}
+            <Box sx={{ position: 'relative' }}>
+              <TextField
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('password', { required: 'Password is required' })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </Box>
+            <Link
+              href="/reset-password"
+              underline="hover"
+              sx={{ display: 'block', mt: 1, textAlign: 'right', fontFamily: 'Roboto Mono, monospace' }}
             >
-              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            </IconButton>
+              Forgot Password?
+            </Link>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Log In
+            </Button>
           </Box>
-          <Link
-            href="/reset-password"
-            underline="hover"
-            sx={{ display: 'block', mt: 1, textAlign: 'right', fontFamily: 'Roboto Mono, monospace' }}
-          >
-            Forgot Password?
-          </Link>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            Log In
-          </Button>
         </Box>
-      </Box>
-    </Container>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 

@@ -2,7 +2,7 @@ import { cookies } from "next/headers"
 import { isAuthenticated } from "./securityUtils"
 import { HeaderValues } from "@/constants"
 
-export const performApiCall = async (request = {}) => {
+export const performApiCall = async (request = {}, ignore = false) => {
   const {
     method,
     requestBody,
@@ -39,8 +39,12 @@ export const performApiCall = async (request = {}) => {
         } 
       }
 
+      if (apiResponse.status === 200 && ignore) {
+        return { status: 200, error: null, data: null }
+      }
+
       // parse JSON from the response
-      const parsedResponse = await apiResponse.json()
+      const parsedResponse = ignore ? null : await apiResponse.json()
       return {
         status: apiResponse.status,
         data: parsedResponse,

@@ -4,19 +4,20 @@ import ChangePasswordView from './view';
 // Server Action for placeholder API call
 async function changePasswordAction(data) {
   'use server';
-  const { newPassword, token } = data;
+
+  console.log(data)
 
   const response = await performApiCall({
     method: 'POST',
-    requestBody: { newPassword}, //will add token here later after emailing link is done
-    url: `${process.env.API_URL}/password-reset`, //placeholder endpoint
+    requestBody: data, 
+    url: `${process.env.API_URL}/recovery`, 
     optionalErrorMessage: 'Failed to reset password',
-  });
+  }, true);
 
   if (response.status === 200) {
-    return { success: true, data: response.data };
+    return response;
   } else {
-    return { success: false, error: response.error };
+    return { status: 500, success: false, error: response.error };
   }
 }
 

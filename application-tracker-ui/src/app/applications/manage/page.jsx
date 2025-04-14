@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation"
 import ApplicationManageView from "./view"
-import { performApiCall } from "@/utils/apiUtils"
+import { performApiCall, performAuthenticatedApiCall } from "@/utils/apiUtils"
+import { headers } from "next/headers"
 
 const resolveApplication = async id => {
-  const data = await performApiCall({
+  const data = await performAuthenticatedApiCall({
     method: 'GET',
     requestBody: null,
     url: `${process.env.API_URL}/application/id?id=${id}`
-  })
+  }, headers())
   return data
 }
 

@@ -12,7 +12,7 @@ export default async function ProfilePage() {
     method: 'GET',
     url: `${process.env.API_URL}/users/email?email=${email}`
   }, nheaders)
-  
+
   if (!data || status !== 200) {
     notFound()
   }

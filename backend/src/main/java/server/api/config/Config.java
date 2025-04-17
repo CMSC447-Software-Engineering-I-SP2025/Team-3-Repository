@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import server.api.dao.ApplicationDAO;
 import server.api.dao.AuthDAO;
+import server.api.dao.JobDAO;
 import server.api.dao.UserDAO;
 import server.api.dao.RecoveryDAO;
 import server.api.database.DatabaseConnector;
@@ -45,6 +46,11 @@ public class Config {
   @Bean
   public RecoveryDAO recoveryDao(DatabaseConnector client) {
     return new RecoveryDAO(client);
+  }
+
+  @Bean
+  public JobDAO jobDao(DatabaseConnector client) {
+    return new JobDAO(client);
   }
 
   @Bean

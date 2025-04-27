@@ -43,6 +43,7 @@ TBD
 - If you have not logged in within the past hour, you will be redirected to the login page.
 ### API
 - The API does not have a web interface. Please use either **Postman** or **cURL** to interact with it.
+    - The API lives at `http://localhost:8080`
 - Find the desired controller you wish to access.
 - Find the desired endpoint you want to hit.
 - Create the request in Postman/CURL.

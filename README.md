@@ -53,6 +53,15 @@ TBD
     - On the right side in the texbox, paste the token you were given.
     - **Tokens expire every 10-20 mins**.
 - Send the request. You should get data back depending on what endpoint you are hitting!
+### Mailpit
+We use **Mailpit** to test sending emails without having the need for SMTP credentials. SMTP credentials is for
+the SMTP Protocol (Simple Mail Transfer protocol), which is how emails are sent from server to server.
+Mailpit works as just that and allows us to see emails we send without actually sending them to someone,
+or from a sender/domain we own.
+<br/>
+- Ensure you have started docker and that the mailpit container is running.
+- In your browser, go to `http://localhost:8025`
+- Welcome to the mailpit dashboard! Try hitting an endpoint that sends emails and you will see it appear here.
 
 ## Login Credentials ( from sample-data ):
 Username: test-user <br/>

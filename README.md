@@ -41,7 +41,6 @@ TBD
 - Open your favorite browser.
 - Go to `http://localhost:3000`
 - If you have not logged in within the past hour, you will be redirected to the login page.
-<br/>
 ### API
 - The API does not have a web interface. Please use either **Postman** or **cURL** to interact with it.
 - Find the desired controller you wish to access.

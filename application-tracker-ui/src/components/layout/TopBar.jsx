@@ -13,6 +13,7 @@ const PathMappings = {
   '/account/edit': 'Edit',
   '/applications/manage': 'Manage Application',
   '/applications/create': 'Create Application',
+  '/recommendations': 'Recommendations',
 }
 
 const TopBar = () => {

@@ -5,7 +5,8 @@ import { HeaderValues } from './constants'
 const NO_AUTH_ROUTES = [
   '/login',
   '/reset-password',
-  '/user/register'
+  '/user/register',
+  '/user/password',
 ]
 
 export async function middleware(request) {

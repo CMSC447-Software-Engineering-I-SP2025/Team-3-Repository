@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.http.HttpStatus;
 
 import org.slf4j.Logger;
@@ -15,6 +13,8 @@ import java.util.UUID;
 
 import server.api.dao.RecoveryDAO;
 import server.api.dao.UserDAO;
+import server.api.mailing.Mail;
+import server.api.mailing.Mailer;
 import server.api.models.Recovery;
 import server.api.models.RecoveryConfirm;
 import server.api.models.User;
@@ -26,12 +26,15 @@ public class RecoveryController {
 	private static final Logger logger = LoggerFactory.getLogger(RecoveryController.class);
 	private final RecoveryDAO recoveryDao;
 	private final UserDAO userDao;
+	private final Mailer mailer;
 
-	public RecoveryController(RecoveryDAO recoveryDao, UserDAO userDao) {
+	public RecoveryController(RecoveryDAO recoveryDao, UserDAO userDao, Mailer mailer) {
 		Assert.notNull(recoveryDao, "RecoveryDAO must not be null!");
 		Assert.notNull(userDao, "UserDAO must not be null!");
+		Assert.notNull(mailer, "Mailer is required");
 		this.recoveryDao = recoveryDao;
 		this.userDao = userDao;
+		this.mailer = mailer;
 	}
 
 	@PostMapping
@@ -72,9 +75,20 @@ public class RecoveryController {
 
 		logger.info("Successfully created recovery document: id='{}', token='{}'", saved.getId(), saved.getToken());
 
+		Mail mail = new Mail();
+		
+		mail.setSubject(String.format("Password Recovery for %s %s", user.getFirstName(), user.getLastName()));
+		mail.setText(String.format(
+			"Your recovery token is: %s\nPlease go to http://localhost:3000/user/password?token=%s&id=%s to update.\nTHIS IS ONLY VALID FOR TEN MINUTES.",
+			recovery.getToken(),
+			recovery.getToken(),
+			recovery.getId().toString()
+		));
+		mail.setTo(user.getEmail());
+		this.mailer.send(mail);
+
 		return ResponseEntity.ok().build();
 	}
-
 
 
 	@PostMapping("/confirm")
@@ -123,6 +137,13 @@ public class RecoveryController {
 		}
 
 		logger.info("Password successfully updated for user: email='{}'", confirmRequest.getEmail());
+
+		Mail mail = new Mail();
+		mail.setSubject("Password Reset Notification");
+		mail.setText("Your password was recently changed. If this was not you, please contact accounts@applicationtracker.com for assistance.");
+		mail.setTo(user.getEmail());
+		this.mailer.send(mail);
+
 		return ResponseEntity.ok().build();
 	}
 }

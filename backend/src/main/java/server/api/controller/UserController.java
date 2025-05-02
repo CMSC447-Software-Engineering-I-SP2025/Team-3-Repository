@@ -13,6 +13,8 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import server.api.dao.UserDAO;
+import server.api.mailing.Mail;
+import server.api.mailing.Mailer;
 import server.api.models.User;
 import server.api.models.Signup;
 
@@ -21,10 +23,13 @@ import server.api.models.Signup;
 public class UserController {
 
     private final UserDAO dao;
+		private final Mailer mailer;
 
-    public UserController(UserDAO dao) {
-		Assert.notNull(dao, "Dao cannot be null!");
-        this.dao = dao;
+    public UserController(UserDAO dao, Mailer mailer) {
+			Assert.notNull(dao, "Dao cannot be null!");
+			this.dao = dao;
+			Assert.notNull(mailer, "mailer not null");
+			this.mailer = mailer;
     }
 
     @GetMapping
@@ -97,6 +102,13 @@ public class UserController {
 			if (saved == null) {
 				return ResponseEntity.badRequest().build();
 			}
+
+			Mail mail = new Mail();
+			mail.setSubject(String.format("Welcome to Application Tracker, %s!", saved.getFirstName()));
+			mail.setTo(saved.getEmail());
+			mail.setText(String.format(
+				"%s,\nWe're so glad to have you on our platform! If you haven't already head over to http://localhost:3000 and get logged in!\nWe recommend reading the FAQ before you start tracking your applications."
+			, saved.getFirstName()));
 
 			return ResponseEntity.ok(saved);
 		}

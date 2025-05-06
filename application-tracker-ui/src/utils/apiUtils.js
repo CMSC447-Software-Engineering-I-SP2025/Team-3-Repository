@@ -64,6 +64,7 @@ export const performAuthenticatedApiCall = async(request, headers) => {
   }
 
   const token = headers.get(HeaderValues.TOKEN)
+  console.log(token)
   if (!token) {
     return { status: 407, data: null }
   } 

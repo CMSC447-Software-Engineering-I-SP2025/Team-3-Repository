@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getToken, getUserDetails } from './utils/securityUtils'
 import { HeaderValues } from './constants'
+import { headers } from 'next/headers'
 
 const NO_AUTH_ROUTES = [
   '/login',
@@ -15,8 +16,10 @@ export async function middleware(request) {
   const isSitemap = request.url.includes('/sitemap.xml')
   const isRobots = request.url.includes('/robots.txt')
   const isNoAuth = !!NO_AUTH_ROUTES.filter(route => request.url.includes(route))?.length > 0
-  const shouldSkip = isNoAuth || isNextResource || isSitemap || isRobots || isFavicon
+  const isRsc = !!request.headers.get('next-action')
+  const shouldSkip = isNoAuth || isNextResource || isSitemap || isRobots || isFavicon || isRsc
   if (shouldSkip) { return }
+
 
   const { origin } = request.nextUrl
   const userDetails = await getUserDetails()

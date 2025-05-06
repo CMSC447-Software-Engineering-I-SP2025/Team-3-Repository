@@ -17,3 +17,16 @@ export const HeaderValues = {
     EMAIL: 'x-app-tracker-user-email',
     TOKEN: 'x-app-tracker-token'
 }
+
+export const DEFAULT_SEARCH_REQUEST = {
+    status: null,
+    priority: null,
+    keywords: null,
+    employer: null,
+    dateCreatedStart: null,
+    dateCreatedEnd: null,
+    dateAppliedStart: null,
+    dateAppliedEnd: null,
+    salaryMin: null,
+    salaryMax: null
+}

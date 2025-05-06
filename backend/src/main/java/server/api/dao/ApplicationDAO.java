@@ -115,7 +115,7 @@ public class ApplicationDAO {
         }
 
         if (search.getDateCreatedStart() != null) {
-            filters.add(Filters.gte("dateCreated", search.getDateAppliedStart()));
+            filters.add(Filters.gte("dateCreated", search.getDateCreatedStart()));
         }
 
         if (search.getDateCreatedEnd() != null) {
@@ -134,11 +134,11 @@ public class ApplicationDAO {
             filters.add(Filters.in("keywords", search.getKeywords()));
         }
 
-        if (search.getSalaryMax() != null) {
+        if (search.getSalaryMax() != null && search.getSalaryMax() > 0) {
             filters.add(Filters.lte("salaryMax", search.getSalaryMax()));
         }
 
-        if (search.getSalaryMin() != null) {
+        if (search.getSalaryMin() != null && search.getSalaryMin() > 0) {
             filters.add(Filters.gte("salaryMin", search.getSalaryMin()));
         }
 

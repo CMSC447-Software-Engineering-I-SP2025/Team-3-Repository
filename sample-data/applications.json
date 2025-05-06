@@ -36,5 +36,62 @@
     "status": "IN_PROGRESS",
     "title": "Sample Application Two",
     "userId": "67f146a24e389f6be008d1da"
+  },
+  {
+    "_id": {
+      "$oid": "67f146e54e389f6be008d1df"
+    },
+    "dateApplied": {
+      "$date": "2002-03-03T00:00:00Z"
+    },
+    "dateCreated": {
+      "$date": "2002-01-01T00:00:00Z"
+    },
+    "employer": "Arbu",
+    "link": "https://linked.in",
+    "priority": "MEDIUM",
+    "salaryMin": 50000,
+    "salaryMax": 70000,
+    "status": "IN_PROGRESS",
+    "title": "Sample Application Three",
+    "userId": "67f146a24e389f6be008d1da"
+  },
+  {
+    "_id": {
+      "$oid": "67f146e54e389f6be008d1da"
+    },
+    "dateApplied": {
+      "$date": "2002-03-03T00:00:00Z"
+    },
+    "dateCreated": {
+      "$date": "2002-02-01T00:00:00Z"
+    },
+    "employer": "Bingus",
+    "link": "https://linked.in",
+    "priority": "MEDIUM",
+    "salaryMin": 50000,
+    "salaryMax": 70000,
+    "status": "REJECTED",
+    "title": "Sample Application FOUR",
+    "userId": "67f146a24e389f6be008d1da"
+  },
+  {
+    "_id": {
+      "$oid": "67f146e54e389f6be008d1db"
+    },
+    "dateApplied": {
+      "$date": "2002-03-03T00:00:00Z"
+    },
+    "dateCreated": {
+      "$date": "2002-03-01T00:00:00Z"
+    },
+    "employer": "Goomba",
+    "link": "https://linked.in",
+    "priority": "LOW",
+    "salaryMin": 50000,
+    "salaryMax": 70000,
+    "status": "OFFER",
+    "title": "Sample Application FOUR",
+    "userId": "67f146a24e389f6be008d1da"
   }
 ]

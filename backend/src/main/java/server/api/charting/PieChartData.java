@@ -1,11 +1,10 @@
 package server.api.charting;
 
-import java.util.List;
-
+import java.util.HashMap;
+import server.api.models.AppStatus;
 import lombok.Data;
 
 @Data
 public class PieChartData {
-  private List<String> labels;
-  private List<Integer> values;
+  private HashMap<AppStatus, Integer> mappings;
 }

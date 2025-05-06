@@ -26,6 +26,7 @@ import { FilterAltOffRounded } from "@mui/icons-material";
 import DatavizCharts from "@/components/dataviz/Charts";
 import { useMediaQuery } from "@mui/material";
 import theme from "@/theme";
+import { getBrowserToken } from "@/utils/browserUtils";
 
 
 const DatavizView = ({ data, resolveCharts = async () => {} }) => {
@@ -99,7 +100,7 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
     }
 
     const asConst = { ...toSubmit }
-    const token = window.sessionStorage.getItem(HeaderValues.TOKEN)
+    const token = getBrowserToken()
 
     const asObj = {
       [HeaderValues.TOKEN]: token

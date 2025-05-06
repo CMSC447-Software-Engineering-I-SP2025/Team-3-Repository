@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getToken, getUserDetails } from './utils/securityUtils'
 import { HeaderValues } from './constants'
-import { headers } from 'next/headers'
 
 const NO_AUTH_ROUTES = [
   '/login',

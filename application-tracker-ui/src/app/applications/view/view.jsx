@@ -34,10 +34,11 @@ import { DateTime } from "luxon";
 import Input from "@/components/Input";
 import Form from "@/components/Form";
 import Date from "@/components/Date";
-import { AppPriority, AppStatus } from "@/constants";
+import { AppPriority, AppStatus, HeaderValues } from "@/constants";
 import { useState } from "react";
 import { fromEnumValue } from "@/utils/enumUtils";
 import PlotMappings from "@/constants/plotMappings";
+import { getBrowserToken } from "@/utils/browserUtils";
 
 const theme = createTheme({
   components: {
@@ -58,26 +59,32 @@ const theme = createTheme({
   },
 });
 
-const FilterOptions = ({
-  filterApplications = async () => {},
-  setAppState = () => {}
-}) => {
+const FilterOptions = ({ filterApplications = async () => {}, setAppState = () => {} }) => {
   const defaultValues = {
-    employer: '',
     status: 'default',
     priority: 'default',
-    keywords: '',
-    dateCreatedStart: DateTime.now(),
-    dateCreatedEnd: DateTime.now(),
-    dateSubmittedStart: DateTime.now(),
-    dateSubmittedEnd: DateTime.now(),
-    salaryMin: 0,
-    salaryMax: 0
+    employer: '',
+    dateCreatedStart: null,
+    dateCreatedEnd: null,
+    dateAppliedStart: null,
+    dateAppliedEnd: null,
+    keywords: [],
+    salaryMin: null,
+    salaryMax: null
   };
 
   const form = useForm({ defaultValues });
 
   const handleSubmit = async values => {
+    let keywords = [];
+
+    if (typeof values.keywords === 'string') {
+      keywords = values.keywords.split(',');
+    } else if (Array.isArray(values.keywords)) {
+      keywords = values.keywords;
+    }
+
+
     let toSubmit = Object.keys(defaultValues).reduce((acc, curr) => ({ ...acc, [curr]: null }), {}); 
     toSubmit.employer = values.employer;
     const dirtyFields = form.formState.dirtyFields;
@@ -90,25 +97,22 @@ const FilterOptions = ({
       toSubmit.priority = values.priority;
     }
 
-    if (dirtyFields?.keywords) {
-      const split = values.keywords?.split(',');
-      toSubmit.keywords = split;
-    }
+    toSubmit.keywords = keywords
 
     if (dirtyFields?.dateCreatedStart) {
-      toSubmit.dateCreatedStart = values.dateCreatedStart.toISODate();
+      toSubmit.dateCreatedStart = values.dateCreatedStart.toISO();
     }
 
     if (dirtyFields?.dateCreatedEnd) {
-      toSubmit.dateCreatedEnd = values.dateCreatedEnd.toISODate();
+      toSubmit.dateCreatedEnd = values.dateCreatedEnd.toISO();
     }
 
-    if (dirtyFields?.dateSubmittedStart) {
-      toSubmit.dateSubmittedStart = values.dateSubmittedStart.toISODate();
+    if (dirtyFields?.dateAppliedStart) {
+      toSubmit.dateAppliedStart = values.dateAppliedStart.toISO();
     }
 
-    if (dirtyFields?.dateSubmittedEnd) {
-      toSubmit.dateSubmittedEnd = values.dateSubmittedEnd.toISODate();
+    if (dirtyFields?.dateAppliedEnd) {
+      toSubmit.dateAppliedEnd = values.dateAppliedEnd.toISO();
     }
 
     if (dirtyFields?.salaryMin && values.salaryMin > 0) {
@@ -119,8 +123,20 @@ const FilterOptions = ({
       toSubmit.salaryMax = values.salaryMax;
     }
 
-    const { data, error } = await filterApplications(toSubmit);
-    setAppState({ applications: data ?? [], error });
+    try {
+      const token = getBrowserToken() 
+      const val = { [HeaderValues.TOKEN]: token }
+      const response = await filterApplications(toSubmit, val);
+
+      if (response?.status !== 200) {
+        setAppState({ applications: [], error: 'Search failed' });
+      } else {
+        setAppState({ applications: response.data ?? [], error: null });
+      }
+    } catch (error) {
+      console.error('API call failed:', error);
+      setAppState({ applications: [], error: 'Search failed' });
+    }
   };
 
   const resetFilters = () => {
@@ -149,36 +165,38 @@ const FilterOptions = ({
             <Grid2 size={3}>
               <FormControl fullWidth size="small">
                 <InputLabel shrink>Priority</InputLabel>
-                <Select 
+                <Select
                   name='priority'
+                  value={form.watch('priority')}
+                  onChange={(e) => form.setValue('priority', e.target.value)}
                   label="Priority"
-                  defaultValue="default"
                   sx={{ backgroundColor: '#fff' }}
                 >
                   <MenuItem value='default'>-- Default --</MenuItem>
-                  {Object.values(AppPriority).map((val, idx) =>
+                  {Object.values(AppPriority).map((val, idx) => (
                     <MenuItem key={idx} value={val}>
                       {fromEnumValue(val)}
                     </MenuItem>
-                  )}
+                  ))}
                 </Select>
               </FormControl>
             </Grid2>
             <Grid2 size={3}>
               <FormControl fullWidth size="small">
                 <InputLabel shrink>Status</InputLabel>
-                <Select 
+                <Select
                   name='status'
+                  value={form.watch('status')}
+                  onChange={(e) => form.setValue('status', e.target.value)}
                   label="Status"
-                  defaultValue="default"
                   sx={{ backgroundColor: '#fff' }}
                 >
                   <MenuItem value='default'>-- Default --</MenuItem>
-                  {Object.values(AppStatus).map((val, idx) =>
+                  {Object.values(AppStatus).map((val, idx) => (
                     <MenuItem key={idx} value={val}>
                       {fromEnumValue(val)}
                     </MenuItem>
-                  )}
+                  ))}
                 </Select>
               </FormControl>
             </Grid2>
@@ -315,7 +333,7 @@ const ApplicationsView = ({
   onBatchUpdate = async () => {},
   onBatchDelete = async () => {}
 }) => {
-  const [appState, setAppState] = useState({ applications, errors: null });
+  const [appState, setAppState] = useState({ applications, error: null });
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBatchEditing, setIsBatchEditing] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);

@@ -1,6 +1,6 @@
 'use client'
 import { Box, Grid2 } from '@mui/material'
-import { BarChartRounded, Article, Search, AddBox, ShowChart, Reviews } from '@mui/icons-material';
+import { BarChartRounded, Article, Search, AddBox, HelpOutline, ShowChart, Reviews} from '@mui/icons-material';
 import Link from 'next/link';
 
 const COMMON_ICON_STYLES = {
@@ -52,6 +52,10 @@ const Header = () =>
       <HeaderEntry href='/dataviz' >
         <ShowChart {...COMMON_ICON_STYLES} />
       </HeaderEntry>
+      <HeaderEntry href='/faq'>
+         <HelpOutline {...COMMON_ICON_STYLES} />
+      </HeaderEntry>
+
     </Grid2>
   </Box>
 export default Header

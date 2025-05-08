@@ -40,6 +40,7 @@ const AppsByMonth = ({ loading = false, chartData }) => {
   }
 
   if (sm) { return null }
+  const height = determineHeight()
 
   const xAxis = chartData?.months ?? []
 
@@ -53,7 +54,6 @@ const AppsByMonth = ({ loading = false, chartData }) => {
       marker: { color: PlotMappings[key]?.color ?? lightPurple }
     }))
 
-  const height = determineHeight()
 
   const plotOptions = {
     data,

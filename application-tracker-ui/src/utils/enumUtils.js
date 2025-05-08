@@ -10,7 +10,7 @@ export const fromEnumValue = enumeration => {
   if (!enumeration) { return null }
   const underscores = enumeration?.split('_')
   return underscores.reduce((acc, curr, idx) => {
-    const newVal = curr[0] + curr.slice(1).toLowerCase()
+    const newVal = curr[0].toUpperCase() + curr.slice(1).toLowerCase()
     return acc += ` ${newVal}`
   }, '').trim()
 }

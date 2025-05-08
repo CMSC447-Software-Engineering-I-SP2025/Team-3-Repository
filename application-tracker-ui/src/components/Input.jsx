@@ -1,4 +1,5 @@
 'use client'
+import { TEXTFIELD_SELECT_SLOT_PROPS, TEXTFIELD_STYLES } from "@/constants"
 import { TextField } from "@mui/material"
 import { Controller, useFormContext } from "react-hook-form"
 
@@ -15,15 +16,9 @@ const Input = ({ name, label, ...props }) => {
       return <TextField
         {...field}
         label={label}
+        slotProps={TEXTFIELD_SELECT_SLOT_PROPS}
         {...props}
-        sx={{
-          borderRadius: 2,
-          "& .MuiOutlinedInput-root": {
-            "&.Mui-focused fieldset": {
-              borderColor: 'intermediate' 
-            },
-          }
-        }}
+        sx={TEXTFIELD_STYLES}
         error={hasError}
         helperText={message}
       /> 

@@ -15,13 +15,22 @@ export default function RootLayout({ children }) {
         style={{
           margin: 0,
           minHeight: '100vh',
-          display: 'flex'
+          display: 'flex',
+          height: '100%'
         }}
       >
         <Provider>
           <Box sx={{ flex: 1, flexGrow: 1 }} >
             <Header/>
-            <Box sx={{ marginLeft: '60px', backgroundColor: 'background', height: '100%' }}>
+            <Box
+              sx={{
+                marginLeft: '60px',
+                backgroundColor: 'background',
+                height: 'fit-content',
+                minHeight: '100vh',
+                pb: 2
+              }}
+            >
               <TopBar/>
               { children }
             </Box>

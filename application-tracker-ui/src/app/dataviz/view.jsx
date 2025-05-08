@@ -12,33 +12,40 @@ import {
   InputLabel,
   Select,
   Alert,
+  TextField,
+  LinearProgress
 } from "@mui/material";
 import { DateTime } from "luxon";
 import Input from "@/components/Input";
 import Form from "@/components/Form";
 import Date from "@/components/Date";
-import { AppPriority, AppStatus, HeaderValues } from "@/constants";
+import { AppPriority, AppStatus, ChartTypes, HeaderValues, TEXTFIELD_SELECT_SLOT_PROPS, TEXTFIELD_STYLES } from "@/constants";
 import { useState } from "react";
 import { fromEnumValue } from "@/utils/enumUtils";
 import { FilterAltOffRounded } from "@mui/icons-material";
+import DatavizCharts from "@/components/dataviz/Charts";
+import { useMediaQuery } from "@mui/material";
+import theme from "@/theme";
 
 
 const DatavizView = ({ data, resolveCharts = async () => {} }) => {
-  const [chartData, setChartData] = useState(data)
+  const [chartData, setChartData] = useState(data?.data)
   const [error, setError] = useState(false)
+  const [chartType, setChartType] = useState(ChartTypes.BAR)
+  const selectedData = chartData?.[chartType] ?? null
 
   const defaultValues = {
-      employer: '',
-      status: 'default',
-      priority: 'default',
-      keywords: '',
-      dateCreatedStart: DateTime.now(),
-      dateCreatedEnd: DateTime.now(),
-      dateAppliedStart: DateTime.now(),
-      dateAppliedEnd: DateTime.now(),
-      salaryMin: 0,
-      salaryMax: 0
-    }
+    employer: '',
+    status: 'default',
+    priority: 'default',
+    keywords: '',
+    dateCreatedStart: DateTime.now(),
+    dateCreatedEnd: DateTime.now(),
+    dateAppliedStart: DateTime.now(),
+    dateAppliedEnd: DateTime.now(),
+    salaryMin: 0,
+    salaryMax: 0
+  }
 
   const form = useForm({
     defaultValues
@@ -107,7 +114,25 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
     setChartData(response?.data ?? null)
   };
 
-  return <PageContainer>
+
+  const sm = useMediaQuery(theme.breakpoints.down('sm'))
+  const md = useMediaQuery(theme.breakpoints.down('md'))
+
+  const determineHeight = () => {
+    if (sm) {
+      return 300 
+    }
+
+    if (md) {
+      return 400 
+    }
+
+    return 500
+  }
+
+  const height = determineHeight()
+
+  return <PageContainer sx={{ mt: 2 }} >
     <ContentContainer sx={{ maxWidth: '95%' }}>
       { error && <Box width='100%'>
           <Alert severity='error'>
@@ -140,6 +165,7 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
                   label="Priority"
                   defaultValue="default"
                   sx={{ backgroundColor: '#fff' }}
+                  {...TEXTFIELD_SELECT_SLOT_PROPS.select}
                 >
                   <MenuItem value='default'>-- Default --</MenuItem>
                   {Object.values(AppPriority).map((val, idx) =>
@@ -158,6 +184,7 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
                   label="Status"
                   defaultValue="default"
                   sx={{ backgroundColor: '#fff' }}
+                  {...TEXTFIELD_SELECT_SLOT_PROPS.select}
                 >
                   <MenuItem value='default'>-- Default --</MenuItem>
                   {Object.values(AppStatus).map((val, idx) =>
@@ -182,6 +209,29 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
             </Grid2>
           </Grid2>
         </Form>
+        <Grid2 container mt={2} >
+          <Grid2 size={12}>
+            <TextField
+              label='Chart Type'
+              select
+              value={chartType}
+              onChange={({ target: { value } }) => setChartType(value)}
+              sx={{
+              }}
+              fullWidth
+              slotProps={TEXTFIELD_SELECT_SLOT_PROPS}
+            >
+              { Object.values(ChartTypes).map((type, index) =>
+                <MenuItem value={type} key={index}>{ fromEnumValue(type) }</MenuItem>
+              ) }
+            </TextField>
+          </Grid2>
+        </Grid2>
+      </Box>
+
+      <Box width='100%' minHeight={height}>
+        { form.formState.isSubmitting ? <LinearProgress/> : <DatavizCharts data={selectedData} type={chartType} height={height} /> }
+        
       </Box>
 
     </ContentContainer>

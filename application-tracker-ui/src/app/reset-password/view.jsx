@@ -23,7 +23,6 @@ const ChangePasswordView = ({ action }) => {
 
   const onSubmit = async (data) => {
     const result = await action(data)
-    console.log(result)
     if (result.status === 200) { 
       setState({ errors: null, success: true })
       return

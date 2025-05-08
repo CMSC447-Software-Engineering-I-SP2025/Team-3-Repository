@@ -22,7 +22,6 @@ const sampleApiFunction = async () => {
 
 const RootPage = async () => {
   const apiData = await sampleApiFunction()
-  console.log(apiData)
 
   const baseStatus = mock_enum_stats.reduce((acc, curr) => ({ ...acc, [curr]: [] }), {})
   const chartData = { ...baseStatus, months: [] }

@@ -26,7 +26,6 @@ const LoginView = ({ action }) => {
   const onSubmit = async (data) => {
     // Call the server action passed from page.jsx
     const result = await action(data);
-    console.log(result)
     if (result.success && result.data) {
       setSessionStorage(result.data)
       router.replace('/')

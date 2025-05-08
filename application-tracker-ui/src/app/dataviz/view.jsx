@@ -27,8 +27,6 @@ const DatavizView = ({ data, resolveCharts = async () => {} }) => {
   const [chartData, setChartData] = useState(data)
   const [error, setError] = useState(false)
 
-  console.log(data)
-
   const defaultValues = {
       employer: '',
       status: 'default',

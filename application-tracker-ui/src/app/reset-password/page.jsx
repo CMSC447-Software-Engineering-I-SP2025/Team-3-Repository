@@ -5,8 +5,6 @@ import ChangePasswordView from './view';
 async function changePasswordAction(data) {
   'use server';
 
-  console.log(data)
-
   const response = await performApiCall({
     method: 'POST',
     requestBody: data, 

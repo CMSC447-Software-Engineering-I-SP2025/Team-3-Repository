@@ -29,7 +29,11 @@ export const getUserDetails = async(suppliedToken) => {
       }
 
       const body = await data.json()
-      return { status: data.status, email: body?.email ?? null }
+      return {
+        status: data.status,
+        email: body?.email ?? null,
+        id: body?.id ?? null
+      }
     })
     .catch(() => ({
       status: 500,

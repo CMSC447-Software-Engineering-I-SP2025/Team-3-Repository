@@ -159,7 +159,6 @@ const UserRegistrationView = ({ handleRegistration = async () => {} }) => {
       password: formData.password
     }
     const apiResponse = await handleRegistration(obj);
-    console.log(apiResponse)
     setState({ response: apiResponse });
   };
 

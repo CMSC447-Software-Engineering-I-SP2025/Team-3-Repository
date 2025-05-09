@@ -1,10 +1,9 @@
 'use client'
 
-const failure = () => {}
 
-const load = setter => {
+const load = (success, failure)=> {
   if (typeof window === 'undefined') { return }
-  navigator?.geolocation?.getCurrentPosition(setter, failure)
+  navigator?.geolocation?.getCurrentPosition(success, failure)
 }
 
 const fetchData = async (lat, long) => {

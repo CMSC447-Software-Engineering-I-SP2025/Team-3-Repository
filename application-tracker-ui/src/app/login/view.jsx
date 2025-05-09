@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { HeaderValues } from '@/constants';
 import PageContainer from '@/components/PageContainer';
 import ContentContainer from '@/components/ContentContainer';
+import { getBrowserToken } from '@/utils/browserUtils';
 
 const LoginView = ({ action }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +23,18 @@ const LoginView = ({ action }) => {
       password: '',
     },
   });
+
+  const shouldDisable = () => {
+    if (typeof window === 'undefined') {
+      return false 
+    }
+
+    const token = getBrowserToken()
+
+    return !!(isSubmitting || token)
+  }
+
+  const disabled = shouldDisable()
 
   const onSubmit = async (data) => {
     // Call the server action passed from page.jsx
@@ -67,7 +80,7 @@ const LoginView = ({ action }) => {
               {...register('username', { required: 'Username is required' })}
               error={!!errors.username}
               helperText={errors.username?.message}
-              disabled={isSubmitting}
+              disabled={disabled}
             />
             <Box sx={{ position: 'relative' }}>
               <TextField
@@ -79,10 +92,11 @@ const LoginView = ({ action }) => {
                 {...register('password', { required: 'Password is required' })}
                 error={!!errors.password}
                 helperText={errors.password?.message}
-                disabled={isSubmitting}
+                disabled={disabled}
               />
               <IconButton
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={disabled}
                 sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}
               >
                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
@@ -104,7 +118,7 @@ const LoginView = ({ action }) => {
               }}
             >
               {
-                isSubmitting ?
+                disabled ?
                 <CircularProgress/>
                 :
                 <Button

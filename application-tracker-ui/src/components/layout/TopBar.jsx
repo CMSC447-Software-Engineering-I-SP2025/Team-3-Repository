@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material"
 import { AccountCircle } from "@mui/icons-material"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Weather from "../Weather"
 
 const PathMappings = {
   '/': 'Dashboard',
@@ -18,6 +19,7 @@ const PathMappings = {
 }
 
 const TopBar = () => {
+
   const path = usePathname() 
   return (
     <Box
@@ -26,13 +28,17 @@ const TopBar = () => {
         backgroundColor: 'white',
         display: 'flex',
         filter: theme => `drop-shadow(0px 5px 3px ${theme.palette.shadow})`,
-        px: 2
+        px: 2,
+        mb: 2
       }}
     >
       <Box flex={1} display='flex' alignItems='center' >
         <Typography variant='h5' fontWeight='bold' >
           { PathMappings[path] }
         </Typography>
+      </Box>
+      <Box sx={{ margin: 'auto' }} >
+        <Weather/>
       </Box>
       <Box flex={1} display='flex' justifyContent='end' alignItems='center' >
         <Link href='/account' >

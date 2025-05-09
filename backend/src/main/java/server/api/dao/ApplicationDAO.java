@@ -2,6 +2,9 @@ package server.api.dao;
 import org.springframework.util.Assert;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import server.api.database.DatabaseConnector;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -150,5 +153,61 @@ public class ApplicationDAO {
         List<Application> results = new ArrayList<>();
         return collection.find(finalQuery).into(results);
 
+    }
+
+    public long batchUpdate(List<String> applicationIds, Map<String, Object> updateFields) {
+        try {
+            List<Bson> updates = new ArrayList<>();
+            
+            if (updateFields.containsKey("status")) {
+                String statusValue = updateFields.get("status").toString();
+                AppStatus status = AppStatus.valueOf(statusValue); 
+                updates.add(Updates.set("status", status));
+            }
+            
+            if (updateFields.containsKey("priority")) {
+                String priorityValue = updateFields.get("priority").toString();
+                AppPriority priority = AppPriority.valueOf(priorityValue);
+                updates.add(Updates.set("priority", priority));
+            }
+            
+            if (updates.isEmpty()) {
+                return 0;
+            }
+            
+            List<ObjectId> objectIds = applicationIds.stream()
+                .map(ObjectId::new)
+                .collect(Collectors.toList());
+            
+            Bson query = Filters.in("_id", objectIds);
+            Bson update = Updates.combine(updates);
+            
+            UpdateResult result = collection.updateMany(query, update);
+            return result.getModifiedCount();
+        } catch (IllegalArgumentException e) {
+            throw new DatabaseException("Invalid enum value provided");
+        }
+    }
+
+    public long batchDelete(List<String> applicationIds) {
+        try {
+            if (applicationIds == null || applicationIds.isEmpty()) {
+                return 0;
+            }
+
+            MongoCollection<Application> collection = this.client.instance(COLLECTION, Application.class);
+            
+            List<ObjectId> objectIds = new ArrayList<>();
+            for (String id : applicationIds) {
+                objectIds.add(new ObjectId(id));
+            }
+            
+            Bson query = Filters.in("_id", objectIds);
+            DeleteResult result = collection.deleteMany(query);
+            return result.getDeletedCount();
+        } catch (Exception e) {
+            log.error("Batch delete failed", e);
+            throw new DatabaseException("Failed to batch delete applications");
+        }
     }
 }

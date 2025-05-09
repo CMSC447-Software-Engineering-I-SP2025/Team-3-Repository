@@ -1,6 +1,7 @@
 package server.api.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.bson.types.ObjectId;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import java.util.List;
+import java.util.Map;
 
 import server.api.dao.ApplicationDAO;
 import server.api.models.Application;
@@ -93,5 +96,58 @@ public class ApplicationController {
         }
 
         return ResponseEntity.ok(true);
+    }
+
+    @PatchMapping("/batch-update")
+    public ResponseEntity<?> batchUpdateApps(
+        @RequestBody Map<String, Object> payload,
+        @RequestParam("userId") String userId
+    ) {
+        try {
+            CurrentUserResolver.canPerformAction(userId);
+            
+            if (!payload.containsKey("applicationIds") || !payload.containsKey("updateFields")) {
+                return ResponseEntity.badRequest().body("Missing required fields in payload");
+            }
+            
+            @SuppressWarnings("unchecked")
+            List<String> applicationIds = (List<String>) payload.get("applicationIds");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> updateFields = (Map<String, Object>) payload.get("updateFields");
+            
+            if (applicationIds.isEmpty()) {
+                return ResponseEntity.badRequest().body("No application IDs provided");
+            }
+            
+            long updatedCount = dao.batchUpdate(applicationIds, updateFields);
+            return ResponseEntity.ok(updatedCount);
+        } catch (UserSecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred");
+        }
+    }
+
+    @DeleteMapping("/batch-delete")
+    public ResponseEntity<?> batchDeleteApps(
+        @RequestBody List<String> applicationIds,
+        @RequestParam("userId") String userId
+    ) {
+        try {
+            CurrentUserResolver.canPerformAction(userId);
+            
+            if (applicationIds == null || applicationIds.isEmpty()) {
+                return ResponseEntity.badRequest().body("No application IDs provided");
+            }
+            
+            long deletedCount = dao.batchDelete(applicationIds);
+            return ResponseEntity.ok(deletedCount);
+        } catch (UserSecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred");
+        }
     }
 }

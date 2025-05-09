@@ -310,49 +310,135 @@ const BatchEditForm = ({
 };
 
 const ApplicationsView = ({ 
-  applications = [], 
-  filterApplications = async () => {}, 
-  onBatchUpdate = async () => {},
-  onBatchDelete = async () => {}
+  initialApplications = [], 
+  userId 
 }) => {
-  const [appState, setAppState] = useState({ applications, errors: null });
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [isBatchEditing, setIsBatchEditing] = useState(false);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [appState, setAppState] = useState({ 
+    applications: initialApplications, 
+    errors: null 
+  })
+  const [selectedIds, setSelectedIds] = useState([])
+  const [isBatchEditing, setIsBatchEditing] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [notification, setNotification] = useState({ 
     open: false, 
     message: '', 
     severity: 'success' 
-  });
+  })
+
+  const filterApplications = async (request) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...request, userId })
+      })
+      
+      const data = await response.json()
+      return { data, status: response.status, error: null }
+    } catch (error) {
+      return { data: null, status: 500, error: error.message }
+    }
+  }
+
+  const onBatchUpdate = async (request) => {
+    try {
+      const apiUrl = `application/batch-update?userId=${userId}`;
+      const response = await fetch(apiUrl, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(request)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Batch update failed');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Batch update error:', error);
+      return { error: error.message };
+    }
+  }
+  
+  const onBatchDelete = async (applicationIds) => {
+    try {
+      const apiUrl = `application/batch-delete?userId=${userId}`;
+      const response = await fetch(apiUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(applicationIds)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Batch delete failed');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Batch delete error:', error);
+      return { error: error.message };
+    }
+  }
 
   const toggleSelectAll = (event) => {
-    setSelectedIds(event.target.checked ? appState.applications.map(app => app.id) : []);
-  };
+    setSelectedIds(event.target.checked ? appState.applications.map(app => app.id) : [])
+  }
 
   const toggleSelectOne = (id) => {
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]);
-  };
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id])
+  }
 
   const handleBatchSubmit = async (data) => {
     setIsLoading(true);
+    
     try {
-      await onBatchUpdate({
+      const validValue = data.field === 'status' 
+        ? Object.values(AppStatus).includes(data.value)
+        : Object.values(AppPriority).includes(data.value);
+  
+      if (!validValue) {
+        throw new Error('Invalid status or priority value');
+      }
+  
+      const result = await onBatchUpdate({
         applicationIds: selectedIds,
         updateFields: { [data.field]: data.value }
       });
-      
-      const { data: freshData } = await filterApplications({});
-      setAppState({ applications: freshData || [], error: null });
+  
+      if (result.error) {
+        throw new Error(result.error);
+      }
+  
+      setAppState(prev => ({
+        ...prev,
+        applications: prev.applications.map(app => 
+          selectedIds.includes(app.id)
+            ? { ...app, [data.field]: data.value }
+            : app
+        )
+      }));
+  
       setNotification({
         open: true,
         message: `Successfully updated ${selectedIds.length} applications`,
         severity: 'success'
       });
+      setSelectedIds([]);
     } catch (error) {
       setNotification({
         open: true,
-        message: 'Failed to update applications',
+        message: `Failed to update applications: ${error.message}`,
         severity: 'error'
       });
     } finally {
@@ -362,28 +448,37 @@ const ApplicationsView = ({
   };
 
   const handleBatchDelete = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
+    
     try {
-      await onBatchDelete(selectedIds);
-      const { data } = await filterApplications({});
-      setAppState({ applications: data || [], error: null });
+      const result = await onBatchDelete(selectedIds)
+      
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      setAppState(prev => ({
+        ...prev,
+        applications: prev.applications.filter(app => !selectedIds.includes(app.id))
+      }))
+
       setNotification({
         open: true,
         message: `Successfully deleted ${selectedIds.length} applications`,
         severity: 'success'
-      });
+      })
     } catch (error) {
       setNotification({
         open: true,
-        message: 'Failed to delete applications',
+        message: `Failed to delete applications: ${error.message}`,
         severity: 'error'
-      });
+      })
     } finally {
-      setIsLoading(false);
-      setDeleteConfirmOpen(false);
-      setSelectedIds([]);
+      setIsLoading(false)
+      setDeleteConfirmOpen(false)
+      setSelectedIds([])
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>

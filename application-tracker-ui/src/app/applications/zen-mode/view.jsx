@@ -1,6 +1,6 @@
 'use client'
 
-import { Alert, AlertTitle, Box, Divider, Grid2, Typography, MenuItem } from "@mui/material"
+import { Alert, AlertTitle, Box, Divider, Grid2, Typography, MenuItem, Button } from "@mui/material"
 import { useForm } from "react-hook-form"
 import * as Yup from 'yup'
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -106,6 +106,16 @@ const ZenModeView = ({ handleCreateApplication = async() => {}, uid = null }) =>
         }}
         spacing={2}
       >
+        <Grid2 size={12} >
+          <Button
+            LinkComponent={Link}
+            variant='contained'
+            href='/'
+            sx={{ backgroundColor: 'intermediate' }}
+          >
+            Exit Zen Mode
+          </Button>
+        </Grid2>
         { error && <Grid2 size={12}>
           <Alert severity='error'>
             <Typography>{ error }</Typography>

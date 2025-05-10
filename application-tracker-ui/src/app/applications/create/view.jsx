@@ -15,6 +15,7 @@ import Select from "@/components/Select"
 import { AppPriority, AppStatus } from "@/constants"
 import { fromEnumValue } from "@/utils/enumUtils"
 import { DateTime } from "luxon"
+import { generateRequestHeaders } from "@/utils/browserUtils"
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required('Required'),
@@ -122,14 +123,15 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
   )
 }
 
-const ApplicationCreateView = ({ handleCreateApplication }) => {
+const ApplicationCreateView = ({ handleCreateApplication, userId }) => {
   const [state, setState] = useState({ response: null })
 
   const form = useForm({
     defaultValues: {
       title: '',
       link: '',
-      salary: '',
+      salaryMin: 0,
+      salaryMax: 0,
       keywords: '',
       employer: '',
       status: AppStatus.IN_PROGRESS,
@@ -141,16 +143,23 @@ const ApplicationCreateView = ({ handleCreateApplication }) => {
   const submitFunction = async formData => {
     const commaDelimedKeywords = formData.keywords.split(',')
 
+    if (!userId) {
+      setState({ response: { error: 'Missing User Id.', status: 500  } })
+      return
+    }
+
     // will fix when login works
     const newValues = {
       ...formData,
       keywords: commaDelimedKeywords,
       userId: null,
-      dateCreated: DateTime.now().toISODate(),
-      dateApplied: formData.status === AppStatus.SUBMITTED ? DateTime.now().toISODate() : null
+      dateCreated: `${DateTime.now().toISODate()}T00:00:00Z`,
+      dateApplied: formData.status === AppStatus.SUBMITTED ? `${DateTime.now().toISODate()}T00:00:00Z` : null,
+      userId
     }
 
-    const apiResponse = await handleCreateApplication(newValues)
+    const headers = generateRequestHeaders()
+    const apiResponse = await handleCreateApplication(newValues, headers)
     setState({ response: apiResponse })
   }
 

@@ -13,22 +13,33 @@ const resolveApplication = async id => {
 }
 
 
-const updateApplication = async body => {
+const updateApplication = async (body, headers) => {
   'use server'
-  const data = await performApiCall({
+
+  const nheaders = new Headers()
+  for (const [key, value] of Object.entries(headers)) {
+    nheaders.set(key, value)
+  }
+
+  const data = await performAuthenticatedApiCall({
     method: 'PUT',
     requestBody: body,
     url: `${process.env.API_URL}/application/modify`
-  })
+  }, nheaders)
   return data
 }
 
-const deleteApplication = async id => {
+const deleteApplication = async (id, headers) => {
   'use server'
-  return await performApiCall({
+  const nheaders = new Headers()
+  for (const [key, value] of Object.entries(headers)) {
+    nheaders.set(key, value)
+  }
+
+  return await performAuthenticatedApiCall({
     method: 'DELETE',
     url: `${process.env.API_URL}/application?id=${id}`
-  })
+  }, nheaders)
 }
 
 

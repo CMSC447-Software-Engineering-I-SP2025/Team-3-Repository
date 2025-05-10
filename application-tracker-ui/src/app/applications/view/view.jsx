@@ -114,14 +114,17 @@ const FilterOptions = ({ filterApplications = async () => {}, setAppState = () =
 
 
     let toSubmit = Object.keys(defaultValues).reduce((acc, curr) => ({ ...acc, [curr]: null }), {}); 
-    toSubmit.employer = values.employer;
     const dirtyFields = form.formState.dirtyFields;
 
-    if (dirtyFields?.status && values.status !== 'default') {
+    if (dirtyFields.employer && values.employer !== '') {
+      toSubmit.employer = values.employer
+    }
+
+    if (values.status !== 'default') {
       toSubmit.status = values.status;
     }
 
-    if (dirtyFields?.priority && values.priority !== 'default') {
+    if (values.priority !== 'default') {
       toSubmit.priority = values.priority;
     }
 
@@ -150,6 +153,8 @@ const FilterOptions = ({ filterApplications = async () => {}, setAppState = () =
     if (dirtyFields?.salaryMax && values.salaryMax > 0) {
       toSubmit.salaryMax = values.salaryMax;
     }
+
+
 
     try {
       const token = getBrowserToken() 
@@ -667,7 +672,7 @@ const ApplicationsView = ({
                         textAlign: 'left',
                         width: '150px'
                       }}>
-                        {DateTime.fromISO(application.dateApplied).toLocaleString(DateTime.DATE_MED)}
+                        { application?.dateApplied ?  DateTime.fromISO(application.dateApplied).toLocaleString(DateTime.DATE_MED) : 'Not Yet Applied'}
                       </TableCell>
                       <TableCell align="right" sx={{ 
                         pr: 2,

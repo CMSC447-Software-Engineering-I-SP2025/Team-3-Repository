@@ -12,3 +12,13 @@ export const getBrowserToken = () => {
 
     return cookie
 }
+
+export const generateRequestHeaders = () => {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const token = getBrowserToken()
+  const headers = { [HeaderValues.TOKEN]: token }
+  return headers
+}

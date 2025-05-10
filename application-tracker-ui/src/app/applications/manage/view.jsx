@@ -7,6 +7,7 @@ import PageContainer from "@/components/PageContainer"
 import Select from "@/components/Select"
 import { AppPriority, AppStatus } from "@/constants"
 import PlotMappings from "@/constants/plotMappings"
+import { generateRequestHeaders } from "@/utils/browserUtils"
 import { fromEnumValue } from "@/utils/enumUtils"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { ArrowBack, DeleteRounded, HelpOutline, WarningRounded, ArrowForward } from "@mui/icons-material"
@@ -77,8 +78,11 @@ const ApplicationManageView = ({
       } else {
         serverSafe.dateApplied = data.dateApplied.toISODate()
       }
+    } else { 
+      serverSafe.dateApplied = null
     }
-    const { status, error } = await handleUpdate(serverSafe)
+
+    const { status, error } = await handleUpdate(serverSafe, generateRequestHeaders())
     if (status !== 200) {
       setErrors([error])
       return
@@ -88,7 +92,7 @@ const ApplicationManageView = ({
   }
 
   const deleteApplication = async() => {
-    const response = await handleDelete(application?.id)
+    const response = await handleDelete(application?.id, generateRequestHeaders())
     setDeleteModal({ open: false, response })
   }
 
@@ -157,7 +161,7 @@ const ApplicationManageView = ({
         </Button>
       </Grid2>
       <Grid2 size={12} >
-        <Collapse in={errors.length > 1}>
+        <Collapse in={errors.length > 0}>
           <Alert severity='error'>
             <AlertTitle><Typography>Failed to Update Application</Typography></AlertTitle>
             { errors.map((item, idx) => <Typography key={idx}>Error: {item}</Typography>) }
@@ -204,7 +208,7 @@ const ApplicationManageView = ({
             </Typography>
           </Grid2>
           <BasicInput disabled name='link' label='Link' />
-          <BasicInput disabled name='Employer' label='Employer' />
+          <BasicInput disabled name='employer' label='Employer' />
           { /** Conditionally render if this has not been submitted */ }
           { form.getValues()?.dateCreated && <DateInput disabled name='dateCreated' label='Date Created' /> }
           { form.getValues()?.dateApplied && <DateInput disabled name='dateApplied' label='Date Applied' /> }

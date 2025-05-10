@@ -74,7 +74,6 @@ const ZenModeView = ({ handleCreateApplication = async() => {}, uid = null }) =>
     const headers = { [HeaderValues.TOKEN]: token }
 
     const apiResponse = await handleCreateApplication(submittable, headers)
-    console.log(apiResponse)
 
     if (apiResponse.status === 200) {
       if (currentApplication <= totalApplications) {

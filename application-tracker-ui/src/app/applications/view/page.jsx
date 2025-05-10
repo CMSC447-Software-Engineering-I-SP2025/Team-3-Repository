@@ -5,6 +5,20 @@ import { headers } from "next/headers";
 import { getUserDetails } from "@/utils/securityUtils";
 import { HeaderValues } from "@/constants";
 
+const filterApplications = async(requestBody, headers) => {
+  'use server'
+  const nheaders = new Headers()
+  for (const [key, value] of Object.entries(headers)) {
+    nheaders.set(key, value)
+  }
+
+  return await performAuthenticatedApiCall({
+    url: `${process.env.API_URL}/search`,
+    requestBody,
+    method: 'POST'
+  }, nheaders)
+}
+
 export default async function ApplicationsPage() {
   const nheaders = headers();
   const token = nheaders.get(HeaderValues.TOKEN);
@@ -27,5 +41,5 @@ export default async function ApplicationsPage() {
     notFound();
   }
 
-  return <ApplicationsView initialApplications={data} />;
+  return <ApplicationsView initialApplications={data} filterApplications={filterApplications} />;
 }

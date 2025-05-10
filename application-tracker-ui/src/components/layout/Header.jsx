@@ -1,6 +1,6 @@
 'use client'
-import { Box, Grid2 } from '@mui/material'
-import { BarChartRounded, Article, Search, AddBox, HelpOutline, ShowChart, Reviews} from '@mui/icons-material';
+import { Box, Grid2, Tooltip, Zoom } from '@mui/material'
+import { BarChartRounded, Article, Search, AddBox, HelpOutline, ShowChart, Reviews, SelfImprovementRounded} from '@mui/icons-material';
 import Link from 'next/link';
 
 const COMMON_ICON_STYLES = {
@@ -11,7 +11,7 @@ const COMMON_ICON_STYLES = {
   }
 }
 
-const HeaderEntry = ({ href = '/', children }) =>
+const HeaderEntry = ({ href = '/', children, name }) =>
   <Grid2
     size={12}
     sx={{
@@ -21,9 +21,11 @@ const HeaderEntry = ({ href = '/', children }) =>
       height: '60px'
     }}
   >
-    <Link href={href} >
-      {children}
-    </Link>
+    <Tooltip slots={{ transition: Zoom }} arrow title={name} placement='right' >
+      <Link href={href} >
+        {children}
+      </Link>
+    </Tooltip>
   </Grid2>
 
 const Header = () =>
@@ -34,25 +36,22 @@ const Header = () =>
     height: '100%',
   }}>
     <Grid2 container mt={2}>
-      <HeaderEntry href='/' >
+      <HeaderEntry href='/' name='Home' >
         <BarChartRounded {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/applications/view' >
+      <HeaderEntry href='/applications/view' name='Applications' >
         <Article {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/applications/search' >
-        <Search {...COMMON_ICON_STYLES} />
+      <HeaderEntry href='/applications/zen-mode' name='Zen Mode' >
+        <SelfImprovementRounded {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/applications/create' >
-        <AddBox {...COMMON_ICON_STYLES} />
-      </HeaderEntry>
-      <HeaderEntry href='/recommendations' >
+      <HeaderEntry href='/recommendations' name='Recommendations'>
         <Reviews {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/dataviz' >
+      <HeaderEntry href='/dataviz' name='Data Visualiztion' >
         <ShowChart {...COMMON_ICON_STYLES} />
       </HeaderEntry>
-      <HeaderEntry href='/faq'>
+      <HeaderEntry href='/faq' name='FAQ' >
          <HelpOutline {...COMMON_ICON_STYLES} />
       </HeaderEntry>
 

@@ -1,1 +1,52 @@
-[{"_id":{"$oid":"680bf50ff798aa45be5d4d87"},"datePosted":{"$date":"2025-04-25T00:00:00Z"},"employerId":"test-employer","keywords":["skill one","skill three"]},{"_id":{"$oid":"680bf5e2f798aa45be5d4d8e"},"datePosted":{"$date":"2025-04-25T00:00:00Z"},"employerId":"test-employer2","keywords":["skill one"]},{"_id":{"$oid":"680bf62df798aa45be5d4d95"},"datePosted":{"$date":"2025-04-25T00:00:00Z"},"employerId":"test-employer","keywords":["skill one","skill two"]}]
+[
+  {
+    "_id": {
+      "$oid": "680bf50ff798aa45be5d4d87"
+    },
+    "datePosted": {
+      "$date": "2025-04-25T00:00:00Z"
+    },
+    "employerId": "test-employer",
+    "keywords": [
+      "skill one",
+      "skill three"
+    ],
+    "employerName": "Elavon",
+    "url": "https://elavon.com",
+    "salary": 120000,
+    "title": "DevOps Engineer"
+  },
+  {
+    "_id": {
+      "$oid": "680bf5e2f798aa45be5d4d8e"
+    },
+    "datePosted": {
+      "$date": "2025-04-25T00:00:00Z"
+    },
+    "employerId": "test-employer2",
+    "keywords": [
+      "skill one"
+    ],
+    "employerName": "UMBC",
+    "url": "https://umbc.edu",
+    "salary": 90000,
+    "title": "myUMBC Database Designer"
+  },
+  {
+    "_id": {
+      "$oid": "680bf62df798aa45be5d4d95"
+    },
+    "datePosted": {
+      "$date": "2025-04-25T00:00:00Z"
+    },
+    "employerId": "test-employer",
+    "keywords": [
+      "skill one",
+      "skill two"
+    ],
+    "employerName": "DoD",
+    "url": "https://defense.gov",
+    "salary": 183000,
+    "title": "Contract Specialist, Software Development"
+  }
+]

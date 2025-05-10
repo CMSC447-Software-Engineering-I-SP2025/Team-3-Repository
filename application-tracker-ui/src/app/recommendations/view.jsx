@@ -1,7 +1,8 @@
 'use client'
 import { useState } from "react";
-import { Box, Grid, Card, Typography, Chip, IconButton } from "@mui/material";
+import { Box, Grid, Card, Typography, Chip, IconButton, useTheme } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import Link from "next/link";
 
 export default function RecommendationsView({ jobs }) {
   // page state
@@ -9,6 +10,8 @@ export default function RecommendationsView({ jobs }) {
   const jobsPerPage = 12; //3 x 4
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
   const currentJobs = jobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
+  const theme = useTheme()
+
 
   const skillsSet = new Set();
   jobs.forEach(job => {
@@ -41,11 +44,15 @@ export default function RecommendationsView({ jobs }) {
                 }}
                 onClick={() => {}}
               >
-                <Typography variant="h6" sx={{ fontSize: "1.1rem" }}>
-                  {job.employerId}
+                <Typography variant="h6" sx={{ fontSize: "1.1rem", display: 'flex', justifyContent: 'space-between' }}>
+                  {job?.employerName}
+                  <Link style={{ color: theme.palette.lightPurple }} href={job?.url}><Typography width='fit-content' >{ job.url }</Typography></Link>
                 </Typography>
                 <Typography sx={{ fontSize: "0.85rem", mb: 1 }}>
-                  {/* no salary or job title, just employerId for now */}
+                  {job?.title}
+                </Typography>
+                <Typography sx={{ fontSize: "0.85rem", mb: 1 }}>
+                  Salary: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job?.salary)}
                 </Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                   {Array.isArray(job.keywords) && job.keywords.map((keyword, index) => (

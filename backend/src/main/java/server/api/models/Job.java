@@ -15,6 +15,10 @@ public class Job {
   @Id
   private ObjectId id;
   private String employerId;
+  private String employerName;
+  private String url;
   private List<String> keywords;
   private Instant datePosted;
+  private Double salary;
+  private String title;
 }

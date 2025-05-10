@@ -28,7 +28,7 @@ import {
   ThemeProvider
 } from "@mui/material";
 import Link from "next/link";
-import { AddRounded, FilterAltOffRounded, Edit, Delete } from "@mui/icons-material";
+import { AddRounded, FilterAltOffRounded, Edit, Delete, KeyboardDoubleArrowDownRounded, KeyboardArrowDownRounded, KeyboardArrowUpRounded, KeyboardDoubleArrowUpRounded } from "@mui/icons-material";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { DateTime } from "luxon";
 import Input from "@/components/Input";
@@ -39,6 +39,34 @@ import { useState } from "react";
 import { fromEnumValue } from "@/utils/enumUtils";
 import PlotMappings from "@/constants/plotMappings";
 import { getBrowserToken } from "@/utils/browserUtils";
+
+const PriorityChip = ({ priority = null }) => {
+  if (!priority) { return 'Invalid' }
+
+  const iconMappings = {
+    [AppPriority.LOW]: {
+      icon: <KeyboardDoubleArrowDownRounded sx={{ color: '#3498eb' }} />,
+    },
+    [AppPriority.MEDIUM]: {
+      icon: <KeyboardArrowDownRounded sx={{ color: '#ffb84d' }} />,
+    },
+    [AppPriority.HIGH]: {
+      icon: <KeyboardArrowUpRounded sx={{ color: '#ff7626' }} />,
+    },
+    [AppPriority.EXPEDITED]: {
+      icon: <KeyboardDoubleArrowUpRounded sx={{ color: '#ff2a26' }} />,
+    },
+  }
+
+  return <Chip 
+    variant='filled' 
+    label={iconMappings[priority]?.icon} 
+    sx={{
+      '& .MuiChip-label': {  display: 'flex', justifyContent: 'center', alignItems: 'center' },
+      backgroundColor: '#404040'
+    }} 
+  />
+}
 
 const theme = createTheme({
   components: {
@@ -328,12 +356,12 @@ const BatchEditForm = ({
 };
 
 const ApplicationsView = ({ 
-  applications = [], 
+  initialApplications = [], 
   filterApplications = async () => {}, 
   onBatchUpdate = async () => {},
   onBatchDelete = async () => {}
 }) => {
-  const [appState, setAppState] = useState({ applications, error: null });
+  const [appState, setAppState] = useState({ applications: initialApplications, error: null });
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBatchEditing, setIsBatchEditing] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -516,6 +544,15 @@ const ApplicationsView = ({
                       />
                     </TableCell>
                     <TableCell sx={{ 
+                        fontWeight: 'bold', 
+                        px: 1,
+                        textAlign: 'left',
+                        width: '150px' 
+                      }}
+                    >
+                      Priority
+                    </TableCell>
+                    <TableCell sx={{ 
                       fontWeight: 'bold', 
                       px: 1,
                       textAlign: 'left',
@@ -567,6 +604,13 @@ const ApplicationsView = ({
                           checked={selectedIds.includes(application.id)}
                           onChange={() => toggleSelectOne(application.id)}
                         />
+                      </TableCell>
+                      <TableCell sx={{ 
+                        px: 1,
+                        textAlign: 'left',
+                        width: '150px'
+                      }}>
+                        <PriorityChip priority={application?.priority} />
                       </TableCell>
                       <TableCell sx={{ 
                         px: 1,

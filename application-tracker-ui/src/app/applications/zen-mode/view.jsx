@@ -11,8 +11,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowForward } from "@mui/icons-material"
 import Select from "@/components/Select"
-import { AppPriority, AppStatus } from "@/constants"
+import { AppPriority, AppStatus, HeaderValues } from "@/constants"
 import { fromEnumValue } from "@/utils/enumUtils"
+import { getBrowserToken } from "@/utils/browserUtils"
+import { DateTime } from "luxon"
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required('Required'),
@@ -25,9 +27,10 @@ const validationSchema = Yup.object().shape({
   priority: Yup.string().required('Required').oneOf(Object.values(AppPriority))
 })
 
-const ZenModeView = () => {
+const ZenModeView = ({ handleCreateApplication = async() => {}, uid = null }) => {
   const totalApplications = 5
   const [currentApplication, setCurrentApplication] = useState(1)
+  const [error, setError] = useState(null)
 
   const form = useForm({
     defaultValues: {
@@ -44,8 +47,34 @@ const ZenModeView = () => {
   })
 
   const submitFunction = async formData => {
-    // fake api working
-    const apiResponse = { status: 200 }
+    const token = getBrowserToken()
+    if (!token) {
+      setError('Missing login token')
+      return
+    }
+
+    if (!uid) {
+      setError('Missing user id')
+      return
+    }
+
+    const now = DateTime.now()
+    const datePart = now.toISODate()
+    const timePart = 'T00:00:00Z'
+    const dateCreated = `${datePart}${timePart}`
+
+    const keywords = formData?.keywords?.split(',') ?? []
+    const submittable = {
+      ...formData,
+      userId: uid,
+      dateCreated,
+      keywords
+    }
+
+    const headers = { [HeaderValues.TOKEN]: token }
+
+    const apiResponse = await handleCreateApplication(submittable, headers)
+    console.log(apiResponse)
 
     if (apiResponse.status === 200) {
       if (currentApplication <= totalApplications) {
@@ -77,6 +106,11 @@ const ZenModeView = () => {
         }}
         spacing={2}
       >
+        { error && <Grid2 size={12}>
+          <Alert severity='error'>
+            <Typography>{ error }</Typography>
+          </Alert>
+        </Grid2>  }
         <Grid2 size={12}>
           <Typography variant="h5" fontWeight="bold">
             Create Job Application (

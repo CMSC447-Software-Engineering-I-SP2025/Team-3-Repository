@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +20,8 @@ import java.util.List;
 
 import server.api.dao.ApplicationDAO;
 import server.api.models.Application;
+import server.api.models.BatchUpdateRequest;
+import server.api.models.BatchUpdateRequest.BatchUpdateType;
 import server.api.security.CurrentUserResolver;
 import server.api.security.UserSecurityException;
 
@@ -25,6 +30,7 @@ import server.api.security.UserSecurityException;
 public class ApplicationController {
 
     private final ApplicationDAO dao;
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationController.class);
 
     public ApplicationController(ApplicationDAO dao) {
         Assert.notNull(dao, "DAO cannot be null!");
@@ -93,5 +99,39 @@ public class ApplicationController {
         }
 
         return ResponseEntity.ok(true);
+    }
+
+
+    @PostMapping("/batch")
+    public ResponseEntity<Boolean> batchUpdate(@RequestBody BatchUpdateRequest request) {
+        Assert.notNull(request , "missing request body");
+        if (request.getApplicationIds() == null || request.getApplicationIds().isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String uid = CurrentUserResolver.getUserId();
+        List<Application> resolved = this.dao.findInListAndUid(uid, request.getApplicationIds());
+
+        List<String> finalIds = resolved.stream().map(x -> x.getId().toString()).toList();
+
+        if (finalIds.size() != request.getApplicationIds().size()) {
+            LOG.error("Batch update failed: mismatch in id count.");
+            return ResponseEntity.notFound().build();
+        }
+
+        if (resolved == null || resolved.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (request.getType() == BatchUpdateType.PRIORITY && request.getPriority() != null) {
+            return ResponseEntity.ok(this.dao.batchPriority(finalIds, request.getPriority(), uid));
+        }
+
+        if (request.getType() == BatchUpdateType.STATUS && request.getStatus() != null) {
+            return ResponseEntity.ok(this.dao.batchStatus(finalIds, request.getStatus(), uid));
+        }
+
+        LOG.error("No matching batch operation was found");
+        return ResponseEntity.notFound().build();
     }
 }

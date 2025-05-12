@@ -1,4 +1,5 @@
 package server.api.dao;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 import java.util.List;
 import java.util.ArrayList;
@@ -150,5 +151,51 @@ public class ApplicationDAO {
         List<Application> results = new ArrayList<>();
         return collection.find(finalQuery).into(results);
 
+    }
+
+    public List<Application> findInListAndUid(String uid, List<String> appids) {
+        List<ObjectId> ids = appids.stream().map(x -> new ObjectId(x)).toList();
+        Bson query =  Filters.and(Filters.eq("userId", uid), Filters.in("_id", ids));
+
+        MongoCollection<Application> col = this.client.instance(COLLECTION, Application.class);
+        List<Application> apps = new ArrayList<>();
+        col.find(query).into(apps);
+        return apps;
+    }
+
+    public Boolean batchPriority(List<String> appids, AppPriority prior, String uid) {
+        List<ObjectId> ids = appids.stream().map(x -> new ObjectId(x)).toList();
+        Bson query =  Filters.and(
+            Filters.eq("userId", uid),
+            Filters.in("_id", ids)
+        );
+
+        Bson update = Updates.set("priority", prior);
+
+        MongoCollection<Application> col = this.client.instance(COLLECTION, Application.class);
+        UpdateResult result = col.updateMany(query, update);
+
+        if (result.getModifiedCount() == appids.size()) {
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean batchStatus(List<String> appids, AppStatus status, String uid) {
+        List<ObjectId> ids = appids.stream().map(x -> new ObjectId(x)).toList();
+        Bson query =  Filters.and(
+            Filters.eq("userId", uid),
+            Filters.in("_id", ids)
+        );
+
+        Bson update = Updates.set("status", status);
+
+        MongoCollection<Application> col = this.client.instance(COLLECTION, Application.class);
+        UpdateResult result = col.updateMany(query, update);
+
+        if (result.getModifiedCount() == appids.size()) {
+            return true;
+        }
+        return false;
     }
 }

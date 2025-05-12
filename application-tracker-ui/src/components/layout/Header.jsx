@@ -7,6 +7,7 @@ import {
   ShowChart,
   Reviews,
   SelfImprovementRounded,
+  MenuBookRounded,
   DangerousOutlined as Dangerous
 } from '@mui/icons-material';
 import Link from 'next/link';
@@ -70,6 +71,9 @@ const Header = () => {
       </HeaderEntry>
       <HeaderEntry href='/faq' name='FAQ' disabled={isZenMode} >
          <HelpOutline {...COMMON_ICON_STYLES} />
+      </HeaderEntry>
+      <HeaderEntry href='/tutorials' name='Tutorials' disabled={isZenMode} >
+        <MenuBookRounded {...COMMON_ICON_STYLES} />
       </HeaderEntry>
 
     </Grid2>

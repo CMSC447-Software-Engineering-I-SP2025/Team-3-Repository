@@ -6,7 +6,9 @@ const NO_AUTH_ROUTES = [
   '/login',
   '/reset-password',
   '/user/register',
-  '/user/password',
+  '/user/password',,
+  '/faq',
+  '/tutorials'
 ]
 
 export async function middleware(request) {

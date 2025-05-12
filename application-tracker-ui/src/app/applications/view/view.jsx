@@ -363,19 +363,13 @@ const BatchEditForm = ({
 const ApplicationsView = ({ 
   initialApplications = [], 
   filterApplications = async () => {}, 
-  onBatchUpdate = async () => {},
-  onBatchDelete = async () => {}
+  handleBatchUpdate = async () => {},
 }) => {
   const [appState, setAppState] = useState({ applications: initialApplications, error: null });
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBatchEditing, setIsBatchEditing] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [notification, setNotification] = useState({ 
-    open: false, 
-    message: '', 
-    severity: 'success' 
-  });
+  const [error, setError] = useState(null)
 
   const toggleSelectAll = (event) => {
     setSelectedIds(event.target.checked ? appState.applications.map(app => app.id) : []);
@@ -386,60 +380,55 @@ const ApplicationsView = ({
   };
 
   const handleBatchSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-      await onBatchUpdate({
-        applicationIds: selectedIds,
-        updateFields: { [data.field]: data.value }
-      });
-      
-      const { data: freshData } = await filterApplications({});
-      setAppState({ applications: freshData || [], error: null });
-      setNotification({
-        open: true,
-        message: `Successfully updated ${selectedIds.length} applications`,
-        severity: 'success'
-      });
-    } catch (error) {
-      setNotification({
-        open: true,
-        message: 'Failed to update applications',
-        severity: 'error'
-      });
-    } finally {
-      setIsLoading(false);
-      setIsBatchEditing(false);
-    }
-  };
+    const token = getBrowserToken()
+    const heads = { [HeaderValues.TOKEN]: token }
 
-  const handleBatchDelete = async () => {
-    setIsLoading(true);
-    try {
-      await onBatchDelete(selectedIds);
-      const { data } = await filterApplications({});
-      setAppState({ applications: data || [], error: null });
-      setNotification({
-        open: true,
-        message: `Successfully deleted ${selectedIds.length} applications`,
-        severity: 'success'
-      });
-    } catch (error) {
-      setNotification({
-        open: true,
-        message: 'Failed to delete applications',
-        severity: 'error'
-      });
-    } finally {
-      setIsLoading(false);
-      setDeleteConfirmOpen(false);
-      setSelectedIds([]);
+    if (!token) {
+      return 
     }
+
+    if (data === 'delete') {
+      const request = {
+        applicationIds: selectedIds,
+        type: 'DELETE'
+      }
+
+      const response = await handleBatchUpdate(request, heads)
+      if (response.status !== 200 || !response.data) {
+        setError('Failed to delete one or more applications.')
+      }
+
+      setDeleteConfirmOpen(false)
+
+      return
+    }
+
+    const type = data.field.toUpperCase()
+
+    const request = {
+      type,
+      status: type === 'STATUS' ? data.value : null,
+      priority: type === 'PRIORITY' ? data.value : null,
+      applicationIds: selectedIds
+    }
+
+    const response = await handleBatchUpdate(request, heads)
+    if (!response.status === 200 || !response.data) {
+      setError('Failed to update one or more applications.')
+    }
+    setIsBatchEditing(false)
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Grid2 container sx={{ p: 3 }}>
         <FilterOptions filterApplications={filterApplications} setAppState={setAppState} />
+        { error && <Grid2 mt={2} size={12}>
+            <Alert severity='error' >
+              <Typography>{ error }</Typography>
+            </Alert>
+          </Grid2>
+        }
         
         <Grid2 size={12} sx={{ mt: 2 }}>
           <Box sx={{ 
@@ -740,36 +729,18 @@ const ApplicationsView = ({
           <DialogActions>
             <Button 
               onClick={() => setDeleteConfirmOpen(false)} 
-              disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
-              onClick={handleBatchDelete} 
+              onClick={() => handleBatchSubmit('delete')} 
               color="error" 
               variant="contained" 
-              disabled={isLoading}
-              endIcon={isLoading && <CircularProgress size={20} color="inherit" />}
             >
-              {isLoading ? 'Deleting...' : 'Confirm Delete'}
+              Confirm Delete
             </Button>
           </DialogActions>
         </Dialog>
-
-        <Snackbar
-          open={notification.open}
-          autoHideDuration={6000}
-          onClose={() => setNotification(prev => ({ ...prev, open: false }))}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert 
-            onClose={() => setNotification(prev => ({ ...prev, open: false }))}
-            severity={notification.severity}
-            sx={{ width: '100%' }}
-          >
-            {notification.message}
-          </Alert>
-        </Snackbar>
       </Grid2>
     </ThemeProvider>
   );

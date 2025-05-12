@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class BatchUpdateRequest {
   public enum BatchUpdateType {
-    STATUS, PRIORITY
+    STATUS, PRIORITY, DELETE
   };
   
   private List<String> applicationIds;

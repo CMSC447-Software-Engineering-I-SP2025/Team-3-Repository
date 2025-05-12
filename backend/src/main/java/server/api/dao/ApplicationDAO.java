@@ -198,4 +198,23 @@ public class ApplicationDAO {
         }
         return false;
     }
+
+    public Boolean batchDelete(List<String> appids, String uid) {
+        List<ObjectId> ids = appids.stream().map(x -> new ObjectId(x)).toList();
+        Bson query =  Filters.and(
+            Filters.eq("userId", uid),
+            Filters.in("_id", ids)
+        );
+
+
+        MongoCollection<Application> col = this.client.instance(COLLECTION, Application.class);
+        DeleteResult result = col.deleteMany(query);
+
+        if (result.getDeletedCount() == appids.size()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

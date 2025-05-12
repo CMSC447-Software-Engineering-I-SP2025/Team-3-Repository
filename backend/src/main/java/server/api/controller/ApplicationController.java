@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import server.api.dao.ApplicationDAO;
@@ -129,6 +131,10 @@ public class ApplicationController {
 
         if (request.getType() == BatchUpdateType.STATUS && request.getStatus() != null) {
             return ResponseEntity.ok(this.dao.batchStatus(finalIds, request.getStatus(), uid));
+        }
+
+        if (request.getType() == BatchUpdateType.DELETE) {
+            return ResponseEntity.ok(this.dao.batchDelete(finalIds, uid));
         }
 
         LOG.error("No matching batch operation was found");

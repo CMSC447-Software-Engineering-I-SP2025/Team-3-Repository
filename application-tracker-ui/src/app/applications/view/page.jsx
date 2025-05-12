@@ -19,6 +19,21 @@ const filterApplications = async(requestBody, headers) => {
   }, nheaders)
 }
 
+const handleBatchUpdate = async (data, token) => {
+  'use server'
+
+  const headers = new Headers()
+  for (const [key, value] of Object.entries(token)) {
+    headers.set(key, value)
+  }
+
+  return await performAuthenticatedApiCall({
+    method: 'POST',
+    url: `${process.env.API_URL}/application/batch`,
+    requestBody: data
+  }, headers)
+}
+
 export default async function ApplicationsPage() {
   const nheaders = headers();
   const token = nheaders.get(HeaderValues.TOKEN);
@@ -41,5 +56,9 @@ export default async function ApplicationsPage() {
     notFound();
   }
 
-  return <ApplicationsView initialApplications={data} filterApplications={filterApplications} />;
+  return <ApplicationsView
+    initialApplications={data}
+    filterApplications={filterApplications}
+    handleBatchUpdate={handleBatchUpdate}
+  />;
 }

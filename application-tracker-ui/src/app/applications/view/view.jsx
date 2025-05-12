@@ -702,7 +702,6 @@ const ApplicationsView = ({
             selectedCount={selectedIds.length}
             onClose={() => setIsBatchEditing(false)}
             onSubmit={handleBatchSubmit}
-            isLoading={isLoading}
           />
         )}
 

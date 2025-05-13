@@ -10,6 +10,8 @@ import Form from "@/components/Form"
 import Input from "@/components/Input"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { getBrowserToken } from "@/utils/browserUtils"
+import { HeaderValues } from "@/constants"
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -128,7 +130,9 @@ const UserEditView = ({ user = {}, handleUpdate = async() => {} }) => {
 
   const submitFunction = async data => {
     const newValues = { ...data, skills, id: user.id }
-    const { data: newData, status, error } = await handleUpdate(newValues)
+    const token = getBrowserToken()
+    const headers = { [HeaderValues.TOKEN]: token }
+    const { data: newData, status, error } = await handleUpdate(newValues, headers)
 
     if (status !== 200) {
       setErrors([error])

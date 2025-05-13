@@ -4,13 +4,19 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { HeaderValues } from "@/constants";
 
-const handleUpdateUser = async data => {
+const handleUpdateUser = async(data, nheaders) => {
   'use server'
+
+  const headers = new Headers()
+  for (const [key, value] of Object.entries(nheaders)) {
+    headers.set(key, value)
+  }
+
   const response = await performAuthenticatedApiCall({
     method: 'PUT',
     requestBody: data,
     url: `${process.env.API_URL}/users/modify`
-  }, headers())
+  }, headers)
 
   return response
 }

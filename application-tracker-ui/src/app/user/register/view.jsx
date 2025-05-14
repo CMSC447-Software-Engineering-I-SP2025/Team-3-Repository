@@ -40,7 +40,7 @@ const BodyContent = ({ state, form, submitFunction = () => {} }) => {
         <Grid2 size={12}>
           <Alert severity="success">
             <AlertTitle>Registration Successful!</AlertTitle>
-            <Link href="/user/login" style={{ textDecoration: 'none' }}>
+            <Link href="/login" style={{ textDecoration: 'none' }}>
               <Typography
                 sx={{
                   display: 'flex',

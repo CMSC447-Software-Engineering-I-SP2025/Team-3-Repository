@@ -71,6 +71,9 @@ public class UserDAO {
 
         user.setId(null);
         user.setPasswordHash(this.passwordEncoder.encode(user.getPasswordHash()));
+        if (user.getSkills() == null) {
+            user.setSkills(new ArrayList<>());
+        }
 
         MongoCollection<User> collection = this.client.instance(COLLECTION, User.class);
 

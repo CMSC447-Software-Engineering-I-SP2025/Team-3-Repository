@@ -49,7 +49,7 @@ const Weather = () => {
     }
 
     const now = DateTime.now()
-    const fmt = `${now.toISODate()}T${now.toFormat('hh:00')}`
+    const fmt = `${now.toISODate()}T${now.toFormat('HH:00')}`
 
     const {
       time,
@@ -81,13 +81,13 @@ const Weather = () => {
 
   const handleWeatherDenied = useCallback(() => {
     setWeather({ error: true })
-  }, setWeather)
+  }, [setWeather])
 
   useEffect(() => {
     if (!weather) {
       WeatherUtils.load(updateWeather, handleWeatherDenied)
     }
-  }, [weather, updateWeather])
+  }, [])
 
   if (!weather) { return null }
 

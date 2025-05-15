@@ -11,7 +11,8 @@ const fetchData = async (lat, long) => {
     latitude: lat.toFixed(2),
     longitude: long.toFixed(2),
     hourly: 'temperature_2m,precipitation_probability',
-    forecast_days: 1
+    forecast_days: 1,
+    past_days: 1
   }
   const search = new URLSearchParams(params).toString()
 
